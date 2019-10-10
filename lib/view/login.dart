@@ -18,9 +18,6 @@ class _LoginPageState extends State<LoginPage> {
     final login = Provider.of<Login>(context);
     return Container(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text("登录"),
-        ),
         body: Container(
           child: Column(
             children: <Widget>[
