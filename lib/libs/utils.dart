@@ -1,6 +1,6 @@
 import 'dart:async';
-
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:math';
 
 Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
@@ -41,6 +41,18 @@ class Utils{
       completer.completeError(err);
     }
     return completer.future;
+  }
+
+
+
+  static String getRandomNumber(){
+    String alphabet = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
+    int strLength = 30;
+    String result = '';
+    for(var i = 0; i < strLength; i++){
+      result = result + alphabet[Random().nextInt(alphabet.length)];
+    }
+    return result;
   }
 
 
