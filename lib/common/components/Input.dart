@@ -94,7 +94,7 @@ class _InputFormState extends State<InputForm> {
   // 密码可见按钮
   Widget _eyeWidget(){
     return InkWell(
-      child: Icon(_showPassword ? Icons.remove_red_eye:Icons.visibility_off, size: ScreenUtil.getInstance().setSp(20), color: Color.fromRGBO(204, 204, 204, 1),),
+      child: Icon(_showPassword ? Icons.visibility_off:Icons.remove_red_eye, size: ScreenUtil.getInstance().setSp(20), color: Color.fromRGBO(204, 204, 204, 1),),
       onTap: _eyeBtn,
     );
   }
@@ -111,7 +111,9 @@ class _InputFormState extends State<InputForm> {
 
   }
   void _vnListener(){
-    _commentFocus.unfocus();
+    if(_commentFocus.hasFocus){
+      _commentFocus.unfocus();
+    }
   }
 
   void _inputChange(String val){
@@ -122,6 +124,7 @@ class _InputFormState extends State<InputForm> {
   void _cancelBtn(){
     setState(() {});
     _unameController.text = '';
+    _commentFocus.unfocus();
   }
 
   void _eyeBtn(){

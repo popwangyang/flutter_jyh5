@@ -8,16 +8,17 @@ import '../../libs/utils.dart';
 class Login with ChangeNotifier {
   User user;
 
-  Future getLogin(String account, String password) async{
+  Future getLogin(Map fromData, BuildContext context) async{
     Completer completer = new Completer();
 
     var params = {
-      'username':account,
-      'password': password,
+      'username': fromData['username'],
+      'password': fromData['password'],
       'terminal_type': "jingyi"
     };
     try{
-      var res = await login(params);
+      var res = await login(params, context,);
+      print(params);
       user = User.fromJson(res.data);
       await Utils.setToken(user.token);
       completer.complete(user);

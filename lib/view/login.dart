@@ -7,6 +7,7 @@ import '../common/components/Input.dart';
 import 'package:toast/toast.dart';
 import '../common/components/Button.dart';
 import '../common/ValueNotifier.dart';
+import '../model/validate/rule.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -133,27 +134,23 @@ class _LoginPageState extends State<LoginPage> {
         ),),
         InputForm(onChange: inputUserChange, placeholder: '请输入邮箱', vn: vn,),
         InputForm(onChange: inputPassWordChange, placeholder: '请输入密码', inputType: 'password', vn: vn,),
-        _loginBtn(),
-
-
-
+        Container(
+          margin: EdgeInsets.only(top: ScreenUtil.getInstance().setHeight(20)),
+          child: _loginBtn(),
+        ),
+        Container(
+          margin: EdgeInsets.only(top: ScreenUtil.getInstance().setHeight(10)),
+          child: InkWell(
+            child: Text("忘记密码", style: TextStyle(
+              fontSize: ScreenUtil.getInstance().setSp(12),
+              color: Colors.blue,
+            ),),
+            onTap: _goforgetPasswordPage,
+          ),
+        )
       ],
     );
   }
-
-  void inputUserChange(val){
-    print(val);
-    userName = val;
-  }
-
-  void inputPassWordChange(val){
-    print(val);
-    passWorld = val;
-  }
-
-
-
-
 
   // 背景图片小部件
   Widget _bgWidget(){
@@ -166,10 +163,10 @@ class _LoginPageState extends State<LoginPage> {
             width: double.infinity,
             height: ScreenUtil.getInstance().setHeight(408),
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/assets/image/loginBGup.png'),
-                fit: BoxFit.fill
-              )
+                image: DecorationImage(
+                    image: AssetImage('lib/assets/image/loginBGup.png'),
+                    fit: BoxFit.fill
+                )
             ),
             child: Container(
               child: _logoWidget(),
@@ -181,17 +178,17 @@ class _LoginPageState extends State<LoginPage> {
             width: double.infinity,
             height: ScreenUtil.getInstance().setHeight(57),
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/assets/image/loginBGdown.png'),
-                fit: BoxFit.fill
-              )
+                image: DecorationImage(
+                    image: AssetImage('lib/assets/image/loginBGdown.png'),
+                    fit: BoxFit.fill
+                )
             ),
           )
         ],
       ),
     );
   }
-  
+
   // logo小部件
   Widget _logoWidget(){
     return SizedBox(
@@ -203,10 +200,10 @@ class _LoginPageState extends State<LoginPage> {
             width: ScreenUtil.getInstance().setWidth(96),
             height: ScreenUtil.getInstance().setHeight(28),
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/assets/image/loginLogo.png'),
-                fit: BoxFit.fitWidth
-              )
+                image: DecorationImage(
+                    image: AssetImage('lib/assets/image/loginLogo.png'),
+                    fit: BoxFit.fitWidth
+                )
             ),
           ),
           Container(
@@ -228,21 +225,48 @@ class _LoginPageState extends State<LoginPage> {
   Widget _loginBtn(){
     return Button(text: '登录',isLoading: loading, onChange: _login,);
   }
+
+
+  Map fromData = {
+    'username': 'admin@hlchang.cn',
+    'password': 'abc12345'
+  };
+
+  Map rule = {
+    'username': Rule(require: true, message: '用户名不能为空', type: ruleType.Email),
+    'password': Rule(require: true, message: '请输入密码', type: ruleType.Password),
+  };
+
+
+  void inputUserChange(val){
+    fromData['username'] = val;
+  }
+
+  void inputPassWordChange(val){
+    fromData['password'] = val;
+  }
+
+  void _goforgetPasswordPage(){
+    Navigator.of(context).pushNamed('forgetPasswordPage');
+  }
   void _login(val){
-    setState(() {
-      loading = val;
-    });
-    login.getLogin('admin@hlchang.cn', 'abc12345').then((val) {
-//      Utils.getToken().then((val){
-//                   print(val);
-//      });
+    bool validateState = Utils.validate(fromData, rule, context);
+    if(validateState){
+      setState(() {
+        loading = val;
+      });
+    login.getLogin(fromData, context).then((val) {
+      setState(() {
+        loading = false;
+        Navigator.of(context).pushNamed('indexPage');
+      });
+    }).catchError((err){
       setState(() {
         loading = false;
       });
-    }).catchError((err){
       print(err);
     });
-
+    }
   }
 }
 
