@@ -19,6 +19,9 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
       child: Scaffold(
         body: Container(
+          decoration: BoxDecoration(
+
+          ),
           child: Column(
             children: <Widget>[
               RaisedButton(
