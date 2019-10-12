@@ -1,16 +1,15 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jy_h5/libs/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 
 class HttpRequest {
 
   HttpRequest({this.baseUrl});
 
   final String baseUrl;
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   BaseOptions getInsideConfig () {
 
@@ -26,7 +25,7 @@ class HttpRequest {
     return config;
   }
 
-  InterceptorsWrapper _wrapper(){
+  InterceptorsWrapper _wrapper(BuildContext context){
     return InterceptorsWrapper(onRequest: (RequestOptions options) async{
       var token = await Utils.getToken();
       if(token != null){
@@ -40,11 +39,18 @@ class HttpRequest {
     }, onError: (DioError e) {
       print("错误之前");
       // Do something with response error
+      int stateCode = e.response.statusCode;
+      if(stateCode == 401){
+        Navigator.pushNamed(context, 'error_404');
+      }else if(stateCode == 400){
+        Toast.show(e.response.data['message'], context, duration: 2);
+      }
       return e; //continue
     });
   }
 
   Future<Response> request (
+    BuildContext context,
     String path, {
     data,
     Map<String, dynamic> queryParameters,
@@ -54,7 +60,7 @@ class HttpRequest {
     ProgressCallback onReceiveProgress,
       }) {
     Dio instance = new Dio(getInsideConfig());
-    instance.interceptors.add(_wrapper());
+    instance.interceptors.add(_wrapper(context));
     return instance.request(
         path,
         options: options,
