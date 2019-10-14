@@ -5,9 +5,10 @@ import '../../common/components/Appbar.dart';
 import '../../common/components/Search.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../common/components/ListView.dart';
-import '../../common/components/FutureBuilder.dart';
 import '../../api/merchant.api.dart';
 import '../../model/merchant.dart';
+import 'package:jy_h5/common/components/loading.dart';
+import 'package:jy_h5/common/components/Error.dart';
 import 'dart:convert';
 
 
@@ -22,7 +23,9 @@ class _ShanghuPageState extends State<ShanghuPage>  with AutomaticKeepAliveClien
   int page = 1;
   int pageSize = 10;
   int total = 0;
-  List result = [];
+  List dataList = [];
+
+  int pageStatues = 1;  // 页面状态 1为加载中，2为加载成功，3为加载失败，4为数据为空
 
   @override
   bool get wantKeepAlive =>true;
@@ -43,28 +46,41 @@ class _ShanghuPageState extends State<ShanghuPage>  with AutomaticKeepAliveClien
             _divider(),
             Expanded(
               flex: 1,
-              child: FutureBuilderWidget(
-                future: _future,
-                body: (AsyncSnapshot snapshot){
-                  var data = json.decode(snapshot.data.toString());
-                  MerchantList merchantList = MerchantList.fromJson(data['results']);
-                  result = merchantList.data;
-                  total = data['count'];
-                   return ListWidget(
-                     total: total,
-                     results: result,
-                     refresh: _refresh,
-                     itemWidget: _itemWidget,
-                     loadMore: _loadMore,
-                   );
-                },
-              ),
+              child: (){
+                if(pageStatues == 1){
+                  return Center(
+                    child: Loading(),
+                  );
+                }else if(pageStatues == 2){
+                  return ListWidget(
+                    total: total,
+                    results: dataList,
+                    refresh: _refresh,
+                    itemWidget: _itemWidget,
+                    loadMore: _loadMore,
+                  );
+                }else if(pageStatues == 3){
+                  return Center(
+                    child: Error(
+                      reload: _reload,
+                    ),
+                  );
+                }else{
+                  return Center(
+                    child: Text("数据为空"),
+                  );
+                }
+              }(),
             )
           ],
         ),
       ),
     );
   }
+
+
+
+
 
 
   Widget _itemWidget(index, list){
@@ -84,11 +100,11 @@ class _ShanghuPageState extends State<ShanghuPage>  with AutomaticKeepAliveClien
     Completer completer = Completer();
     try{
       page = 1;
-      var result = await _future();
-      var data = json.decode(result.toString());
-      MerchantList merchantList = MerchantList.fromJson(data['results']);
-      print(merchantList.data.length);
+      MerchantList merchantList = await getData();
       completer.complete(merchantList.data);
+      setState(() {
+        dataList = merchantList.data;
+      });
     }catch(err){
       completer.completeError(err);
     }
@@ -97,38 +113,87 @@ class _ShanghuPageState extends State<ShanghuPage>  with AutomaticKeepAliveClien
 
   Future _loadMore() async{
     Completer completer = Completer();
+
     try{
-      if(page * pageSize < total){
+      if(page * pageSize <= total){
         page++;
-        var result = await _future();
-        var data = json.decode(result.toString());
+        var sendData = {
+          'page': page,
+          'page_size': pageSize,
+          'name': ''
+        };
+        var results = await getMerchantList(sendData, context);
+        var data = json.decode(results.toString());
         MerchantList merchantList = MerchantList.fromJson(data['results']);
+        setState(() {
+          dataList.addAll(merchantList.data);
+        });
         completer.complete(merchantList.data);
       }else{
-        completer.complete([]);
+        completer.complete(null);
       }
     }catch(err){
+      page--;
+      setState(() {
+        pageStatues = 3;
+      });
       completer.completeError(err);
     }
 
     return completer.future;
   }
 
-  Future _future() async {
+  _reload() async{
+    await getData();
+
+  }
+
+  @override
+  void initState() {
+    initData();
+    super.initState();
+  }
+
+  initData() async{
+    try{
+      MerchantList merchantList = await getData();
+      dataList = merchantList.data;
+    }catch(err){
+      print(err);
+    }
+  }
+
+  Future getData() async{
+    Completer completer = Completer();
+    setState(() {
+      pageStatues = 1;
+    });
     var sendData = {
       'page': page,
       'page_size': pageSize,
       'name': ''
     };
-    print('_future');
-    return getMerchantList(sendData, context);
+    try{
+      var results = await getMerchantList(sendData, context);
+      var data = json.decode(results.toString());
+      MerchantList merchantList = MerchantList.fromJson(data['results']);
+      if(merchantList.data.length > 0){
+        pageStatues = 2;
+      }else{
+        pageStatues = 4;
+      }
+      setState(() {});
+      total = data['count'];
+      completer.complete(merchantList);
+    }catch(err){
+      setState(() {
+        pageStatues = 3;
+      });
+      completer.completeError(err);
+    }
+    return completer.future;
   }
 
-  @override
-  void initState() {
-    print('initState');
-    super.initState();
-  }
 
 }
 
@@ -157,7 +222,7 @@ class  ItemWidget extends StatelessWidget {
             ),),
             trailing: Icon(Icons.arrow_forward_ios, size: ScreenUtil.getInstance().setSp(16), color: Color.fromRGBO(153, 153, 153, 1),),
             onTap: (){
-              print("丁阿基");
+              Navigator.of(context).pushNamed("merchantDetail", arguments: merchant);
             },
           ),
           _divider(),

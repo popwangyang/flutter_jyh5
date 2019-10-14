@@ -10,3 +10,11 @@ Future<Response> getMerchantList(data, context){
     options: Options(method: 'get'),
   );
 }
+
+Future<Response> getMerchantDetail(id, context){
+  return ajax.request(
+      context,
+      '/copyright/ktv/merchant/${id}',
+      options: Options(method: 'get'),
+     );
+}

@@ -15,6 +15,8 @@ class KtvList {
 class KTV {
   int id;
   int type;
+  String name;
+  String merchant_name;
   String place_contact;
   String phone_number;
   String province_code;
@@ -27,6 +29,8 @@ class KTV {
   KTV({
     this.id,
     this.address,
+    this.name,
+    this.merchant_name,
     this.city_code,
     this.county_code,
     this.opening_hours,
@@ -40,6 +44,8 @@ class KTV {
   factory KTV.fromJson(dynamic data){
     return KTV(
       id: data['id'],
+      name: data['name'],
+      merchant_name: data['merchant_name'],
       address: data['address'],
       province_code: data['province_code'],
       city_code: data['city_code'],
@@ -55,7 +61,7 @@ class KTV {
 }
 
 class BusinessHours {
-  int flag;
+  String flag;
   List days;
   String start;
   String end;
@@ -69,7 +75,7 @@ class BusinessHours {
   
   factory BusinessHours.fromJson(dynamic json){
     return BusinessHours(
-      flag: json['flag'],
+      flag: json['flag'].toString(),
       days: json['days'],
       start: json['start'],
       end: json['end']

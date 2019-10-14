@@ -21,7 +21,10 @@ class _IndexPageState extends State<IndexPage> {
   Widget build(BuildContext context) {
     return Scaffold(
      body: BottomBar(
-       page: pages[_index],
+       page: IndexedStack(
+         index: _index,
+         children: pages,
+       ),
        index: _index,
        onChange: (index){
          print(index);

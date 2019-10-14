@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+
 enum LoadStatus{
   // 正在加载
   STATUS_LOADING,
@@ -33,23 +34,23 @@ class ListWidget extends StatefulWidget {
 
 class _ListWidgetState extends State<ListWidget> {
 
-  List _results;
   LoadStatus _loadStatus = LoadStatus.STATUS_IDEL;
   String _loadText = '空闲状态';
   ScrollController _scrollController = ScrollController();
 
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      child:RefreshIndicator(
+      child: RefreshIndicator(
         onRefresh: _refresh,
         child: ListView.builder(
             controller: _scrollController,
             padding: EdgeInsets.only(top: 0),
-            itemCount: _results.length + 1,
+            itemCount: widget.results.length + 1,
             itemBuilder: (BuildContext context, int index) {
-              if(index < _results.length){
-                return widget.itemWidget(index, _results);
+              if(index < widget.results.length){
+                return widget.itemWidget(index, widget.results);
               }else{
                 return Container(
                   height: ScreenUtil().setHeight(50),
@@ -64,36 +65,27 @@ class _ListWidgetState extends State<ListWidget> {
     );
   }
 
+
   // 刷新函数
   Future _refresh(){
-
-    return widget.refresh().then((val){
-      print(val);
-      setState(() {
-        setState(() {
-          _results = val;
-        });
-
-      });
-    });
+    return widget.refresh();
   }
   _getMoreDate() async{
-    print("数组长${_results.length}总数有${widget.total}");
-    if(_results.length < widget.total && _loadStatus != LoadStatus.STATUS_LOADING){
-      print("加载中...");
+    if(widget.results.length < widget.total && _loadStatus != LoadStatus.STATUS_LOADING){
       setState(() {
         _loadStatus = LoadStatus.STATUS_LOADING;
         _loadText = "加载中...";
       });
-      var result = await widget.loadMore();
-
-      setState(() {
-        _results.addAll(result);
-        _loadStatus = LoadStatus.STATUS_IDEL;
-        _loadText = "空闲状态";
-      });
-    }else if(_results.length == widget.total && _loadStatus != LoadStatus.STATUS_LOADING){
-      print("没有更多数据了");
+      try{
+        await widget.loadMore();
+        setState(() {
+          _loadStatus = LoadStatus.STATUS_IDEL;
+          _loadText = "空闲状态";
+        });
+      }catch(err){
+        print(err);
+      }
+    }else if(widget.results.length == widget.total && _loadStatus != LoadStatus.STATUS_LOADING){
       setState(() {
         _loadStatus = LoadStatus.STATUS_IDEL;
         _loadText = "没有更多数据了";
@@ -103,9 +95,6 @@ class _ListWidgetState extends State<ListWidget> {
 
   @override
   void initState() {
-    setState(() {
-      _results = widget.results;
-    });
     _scrollController.addListener((){
       if(_scrollController.position.pixels >
           _scrollController.position.maxScrollExtent - ScreenUtil().setHeight(50)) {
