@@ -82,3 +82,96 @@ class BusinessHours {
     );
   }
 }
+
+class KtvDetailModel {
+  int id;
+  String name;
+  int type;
+  String contact;
+  String placeContact;
+  String phoneNumber;
+  String address;
+  String openingHours;
+  String businessHours;
+  int businessState;
+  double balance;
+  String serialNumber;
+  String provinceCode;
+  String cityCode;
+  String countyCode;
+  int accountStatus;
+  String chargeableTime;
+  int merchant;
+  int owenBoxCount;
+  int implementBoxCount;
+
+  KtvDetailModel(
+      {this.id,
+        this.name,
+        this.type,
+        this.contact,
+        this.placeContact,
+        this.phoneNumber,
+        this.address,
+        this.openingHours,
+        this.businessHours,
+        this.businessState,
+        this.balance,
+        this.serialNumber,
+        this.provinceCode,
+        this.cityCode,
+        this.countyCode,
+        this.accountStatus,
+        this.chargeableTime,
+        this.merchant,
+        this.owenBoxCount,
+        this.implementBoxCount});
+
+  KtvDetailModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    type = json['type'];
+    contact = json['contact'];
+    placeContact = json['place_contact'];
+    phoneNumber = json['phone_number'];
+    address = json['address'];
+    openingHours = json['opening_hours'];
+    businessHours = json['business_hours'];
+    businessState = json['business_state'];
+    balance = json['balance'];
+    serialNumber = json['serial_number'];
+    provinceCode = json['province_code'];
+    cityCode = json['city_code'];
+    countyCode = json['county_code'];
+    accountStatus = json['account_status'];
+    chargeableTime = json['chargeable_time'];
+    merchant = json['merchant'];
+    owenBoxCount = json['owen_box_count'];
+    implementBoxCount = json['implement_box_count'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['type'] = this.type;
+    data['contact'] = this.contact;
+    data['place_contact'] = this.placeContact;
+    data['phone_number'] = this.phoneNumber;
+    data['address'] = this.address;
+    data['opening_hours'] = this.openingHours;
+    data['business_hours'] = this.businessHours;
+    data['business_state'] = this.businessState;
+    data['balance'] = this.balance;
+    data['serial_number'] = this.serialNumber;
+    data['province_code'] = this.provinceCode;
+    data['city_code'] = this.cityCode;
+    data['county_code'] = this.countyCode;
+    data['account_status'] = this.accountStatus;
+    data['chargeable_time'] = this.chargeableTime;
+    data['merchant'] = this.merchant;
+    data['owen_box_count'] = this.owenBoxCount;
+    data['implement_box_count'] = this.implementBoxCount;
+    return data;
+  }
+}

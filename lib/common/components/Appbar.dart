@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jy_h5/common/style.dart';
 
 class AppTitle extends StatelessWidget {
 
@@ -41,7 +42,7 @@ class AppTitle extends StatelessWidget {
             Expanded(
               flex: 1,
               child: Center(
-                child: Text(title, style: TextStyle(fontWeight: FontWeight.w600, color: Color.fromRGBO(2, 2, 2, 1), fontSize: ScreenUtil.getInstance().setSp(16)),),
+                child: Text(title, style: Style.pageTitle(),),
               ),
             ),
             SizedBox(

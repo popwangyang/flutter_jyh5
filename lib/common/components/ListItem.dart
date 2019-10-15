@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jy_h5/common/style.dart';
 
 class ListItem extends StatelessWidget {
 
@@ -24,20 +24,22 @@ class ListItem extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   flex: 1,
-                  child: Text("$title", style: TextStyle(
-                      color: Color.fromRGBO(68, 68, 68, 1),
-                      fontWeight: FontWeight.w400,
-                      fontSize: ScreenUtil().setSp(14)
-                  ),),
+                  child: Text("$title", style: Style.listTitle(),),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Text("$label", textAlign: TextAlign.right, style: TextStyle(
-                      color: Color.fromRGBO(160, 160, 160, 1),
-                      fontSize: ScreenUtil().setSp(14),
-                      fontWeight: FontWeight.w400
-                  ),),
-                )
+                (){
+                  if(label != null){
+                    return Expanded(
+                      flex: 1,
+                      child: Text("$label",
+                          textAlign: TextAlign.right,
+                          style: Style.listLabel()
+                      ),
+                    );
+                  }else{
+                    return Container();
+                  }
+                }()
+
               ],
             ),
           ),
@@ -45,8 +47,8 @@ class ListItem extends StatelessWidget {
             opacity: isLast ? 0:1,
             child: Divider(
               indent: 16,
-              height: 1,
-              color: Colors.grey,
+              height: 2,
+              color: Color.fromRGBO(235, 237, 240, 1),
             ),
           )
 

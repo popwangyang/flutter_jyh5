@@ -51,10 +51,10 @@ class _InputFormState extends State<InputForm> {
       child: Container(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(
               width:ScreenUtil.getInstance().setWidth(inputWidth),
-              height: ScreenUtil.getInstance().setHeight(44),
               child:  TextField(
                 controller: _unameController, //设置controller
                 obscureText: widget.inputType == 'text'? false : _showPassword,

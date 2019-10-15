@@ -1,4 +1,4 @@
-
+import 'ktv.dart';
 // 商户模型
 
 class Merchant {
@@ -39,6 +39,40 @@ class MerchantList {
 
     return MerchantList(
        json.map((i) => Merchant.fromJson(i)).toList()
+    );
+  }
+
+}
+
+// 商户详情模型
+class MerchantDetailModel {
+  int merchantID;
+  String phone;
+  String brandName;
+  String email;
+  bool accountStatues;
+  String createDate;
+  List ktvList;
+
+  MerchantDetailModel({
+    this.ktvList,
+    this.accountStatues,
+    this.brandName,
+    this.createDate,
+    this.email,
+    this.merchantID,
+    this.phone
+  });
+
+  factory MerchantDetailModel.fromJson(dynamic json){
+    return MerchantDetailModel(
+      merchantID: json['acc']['id'],
+      phone: json['acc']['phone'],
+      brandName: json['acc']['brand'] == null ? '暂无':json['acc']['brand']['name'],
+      email: json['acc']['email'],
+      accountStatues: json['acc']['is_active'],
+      createDate: json['acc']['create_date'],
+      ktvList: json['ktv_list'].map((i) => KtvDetailModel.fromJson(i)).toList()
     );
   }
 

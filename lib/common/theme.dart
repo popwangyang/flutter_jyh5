@@ -16,5 +16,9 @@ final appTheme = ThemeData(
     height: 0,
     padding: EdgeInsets.all(0),
     buttonColor: Colors.transparent
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+      contentPadding:EdgeInsets.all(0),  // 设置input的默认padding
+      border: InputBorder.none  // 设置input的默认border
   )
 );

@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../common/components/ListView.dart';
 import '../../api/merchant.api.dart';
 import '../../model/merchant.dart';
+import 'components/detail/detail.dart';
 import 'package:jy_h5/common/components/loading.dart';
 import 'package:jy_h5/common/components/Error.dart';
 import 'dart:convert';
@@ -222,7 +223,7 @@ class  ItemWidget extends StatelessWidget {
             ),),
             trailing: Icon(Icons.arrow_forward_ios, size: ScreenUtil.getInstance().setSp(16), color: Color.fromRGBO(153, 153, 153, 1),),
             onTap: (){
-              Navigator.of(context).pushNamed("merchantDetail", arguments: merchant);
+              _goDetail(merchant, context);
             },
           ),
           _divider(),
@@ -236,6 +237,14 @@ class  ItemWidget extends StatelessWidget {
       height: 1,
       color: Color.fromRGBO(246, 246, 246, 1),
      );
+  }
+
+
+  _goDetail(merchant, context){
+    Navigator.of(context).push(
+        new MaterialPageRoute(builder: (_) {
+           return MerchantDetail(merchant: merchant,);
+        }));
   }
 }
 

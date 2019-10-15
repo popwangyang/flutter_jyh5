@@ -4,27 +4,36 @@ import 'package:jy_h5/model/merchant.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jy_h5/common/components/ListItem.dart';
 import 'package:jy_h5/api/merchant.api.dart';
+import 'package:jy_h5/common/components/PageContent.dart';
+import 'package:jy_h5/common/style.dart';
+import 'edited.dart';
+import 'dart:convert';
 
 
 
 class MerchantDetail extends StatefulWidget {
+
+  final Merchant merchant;
+
+  MerchantDetail({Key key, this.merchant}):super(key: key);
+
   @override
   _MerchantDetailState createState() => _MerchantDetailState();
 }
 
 class _MerchantDetailState extends State<MerchantDetail> {
 
-  Merchant merchant;
+  int pageStatues = 1;
+  MerchantDetailModel merchantDetailModel;
+  int index = 0;
 
   @override
   Widget build(BuildContext context) {
-    merchant = ModalRoute.of(context).settings.arguments;
-    getData();
     return Scaffold(
       body: Container(
         child: Column(
           children: <Widget>[
-            AppTitle(hasBack: true, title: '${merchant.name}',),
+            AppTitle(hasBack: true, title: '${widget.merchant.name}',),
             Expanded(
               flex: 1,
               child: Container(
@@ -32,17 +41,21 @@ class _MerchantDetailState extends State<MerchantDetail> {
                 padding: EdgeInsets.only(
                     left: ScreenUtil().setWidth(15),
                     right: ScreenUtil().setWidth(15),
-                    top: ScreenUtil().setHeight(10)
+                    top: ScreenUtil().setHeight(10),
+                    bottom: ScreenUtil().setHeight(10)
                 ),
                 child: Column(
                   children: <Widget>[
-                    _title(),
-                    ListItem(
-                      title: "账号",
-                      label: "1375441740@qq.com",
+                    Expanded(
+                      flex: 1,
+                      child:PageContent(
+                        pageStatues: pageStatues,
+                        content: _content,
+                        reload: getData,
+                      ),
                     ),
                   ],
-                ),
+                ) ,
               ),
             )
           ],
@@ -52,6 +65,7 @@ class _MerchantDetailState extends State<MerchantDetail> {
   }
 
 
+  //页面标体
   Widget _title(){
     return Container(
       padding: EdgeInsets.only(left: ScreenUtil().setWidth(10), right: ScreenUtil().setWidth(10)),
@@ -66,7 +80,7 @@ class _MerchantDetailState extends State<MerchantDetail> {
         children: <Widget>[
           Container(
             width: ScreenUtil().setWidth(250),
-            child: Text("商户名称商户名称商商户名称", style: TextStyle(
+            child: Text("${widget.merchant.name}", style: TextStyle(
               fontWeight: FontWeight.w600,
               color: Color.fromRGBO(255, 255, 255, 1),
               fontSize: ScreenUtil().setSp(16)
@@ -96,7 +110,11 @@ class _MerchantDetailState extends State<MerchantDetail> {
                 ),
             ),
             onPressed: () {
-              print('ppppppppppppp');
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) {
+                    return MerchantEdited();
+                  })
+              );
             }
           )
         ],
@@ -104,21 +122,90 @@ class _MerchantDetailState extends State<MerchantDetail> {
     );
   }
 
+  //页面内容
+  Widget _content(){
+    return Container(
+      child: Column(
+        children: <Widget>[
+          _title(),
+          ListItem(
+            title: '商户ID',
+            label: '${merchantDetailModel.merchantID}',
+          ),
+          ListItem(
+            title: '账号',
+            label: '${merchantDetailModel.phone}',
+          ),
+          ListItem(
+            title: '品牌名称',
+            label: '${merchantDetailModel.brandName}',
+          ),
+          ListItem(
+            title: '邮箱账号',
+            label: '${merchantDetailModel.email == null ? '暂无':merchantDetailModel.email}',
+          ),
+          ListItem(
+            title: '账号状态',
+            label: '${merchantDetailModel.accountStatues ? '已启用':'已禁用'}',
+          ),
+          ListItem(
+            title: '创建日期',
+            label: '${merchantDetailModel.createDate}',
+            isLast: true,
+          ),
+          Container(
+            height: ScreenUtil().setHeight(40),
+            width: ScreenUtil().width,
+            alignment: Alignment.centerLeft,
+            child: Text("关联场所：${merchantDetailModel.ktvList.length}", style: Style.navTitle()),
+          ),
+          Container(
+            child: Column(
+              children: merchantDetailModel.ktvList.map((item){
+                index++;
+                return ListItem(
+                  title: '${item.name}',
+                  isLast: index == merchantDetailModel.ktvList.length,
+                );
+              }).toList(),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+
   @override
   void initState() {
-
+    getData();
     super.initState();
   }
 
   getData() async{
-    print(merchant);
-    var result = await getMerchantDetail(merchant.id, context);
-
-    print(result);
-
+    setState(() {
+      pageStatues = 1;
+    });
+    try{
+      var result = await getMerchantDetail(widget.merchant.id, context);
+      print(result);
+      merchantDetailModel = MerchantDetailModel.fromJson(json.decode(result.toString()));
+      print("${merchantDetailModel.merchantID}");
+      setState(() {
+        pageStatues = 2;
+      });
+    }catch(err){
+      print(err);
+      setState(() {
+        pageStatues = 3;
+      });
+    }
   }
 
 
+
 }
+
+
 
 
