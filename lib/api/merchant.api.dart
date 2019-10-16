@@ -18,3 +18,11 @@ Future<Response> getMerchantDetail(id, context){
       options: Options(method: 'get'),
      );
 }
+
+Future<Response> getCompanyBrandList(data, context){
+  return ajax.request(
+    context,
+    '/copyright/rbac/company-brands',
+    options: Options(method: 'get'),
+  );
+}

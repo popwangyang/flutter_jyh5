@@ -1,19 +1,56 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:jy_h5/common/components/Appbar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jy_h5/common/style.dart';
 import 'package:jy_h5/common/components/ListSelect.dart';
-import 'package:city_pickers/city_pickers.dart';
+import 'package:jy_h5/common/components/ListInput.dart';
+import 'package:jy_h5/api/merchant.api.dart';
+import 'package:jy_h5/model/brand.dart';
+import 'package:jy_h5/common/style.dart';
+import 'package:jy_h5/model/merchant.dart';
+import 'package:provider/provider.dart';
+import 'package:jy_h5/store/model/loginModel.dart';
+import 'package:jy_h5/model/ktv.dart';
+
 
 
 class MerchantEdited extends StatefulWidget {
+
+  final MerchantDetailModel merchantDetailModel;
+
+  MerchantEdited({Key key, this.merchantDetailModel}):super(key: key);
+
   @override
   _MerchantEditedState createState() => _MerchantEditedState();
 }
 
 class _MerchantEditedState extends State<MerchantEdited> {
+
+  List names = [];
+  String vodName;
+  bool _switchSelected = true;
+  Login loginData;
+  String name; // 商户名称
+  String phone; // 账号;
+  String email;  // 邮箱
+  String companyBrand;  // 品牌名称
+
+
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
+
+    loginData = Provider.of<Login>(context);
+    names = loginData.companyBrands.map((item) => item.name).toList();
+
+    companyBrand = widget.merchantDetailModel.brandName;
+
     return Container(
       child: Scaffold(
         body: Column(
@@ -22,364 +59,224 @@ class _MerchantEditedState extends State<MerchantEdited> {
             SizedBox(
               height: ScreenUtil().setHeight(10),
             ),
-            ListInput(
-              title: '商户名称',
-              placeholder: '请输入商户名称',
-            ),
-            ListInput(
-              title: '账号',
-              placeholder: '请输入账号',
-            ),
-            ListInput(
-              title: '邮箱号',
-              placeholder: '请输入邮箱号',
-              isRequired: false,
-            ),
-            ListSelected(),
+            Expanded(
+              flex: 1,
+              child: _contentWidget(),
+            )
           ],
         ),
       ),
     );
   }
 
-}
+  Widget _contentWidget(){
+    return SingleChildScrollView(
+      physics: BouncingScrollPhysics(),
+      child: Column(
+        children: <Widget>[
+          ListInput(
+            title: '商户名称',
+            placeholder: '请输入商户名称',
+            value: widget.merchantDetailModel.name,
+            onChange: (e){
+              print(e);
+              name = e;
+            },
+          ),
+          ListInput(
+            title: '账号',
+            placeholder: '请输入账号',
+            value: widget.merchantDetailModel.phone,
+          ),
+          ListInput(
+            title: '邮箱号',
+            placeholder: '请输入邮箱号',
+            value: widget.merchantDetailModel.email,
+            isRequired: false,
+          ),
+          ListSelected(
+              title: '品牌名称',
+              data: names,
+              onChange: vodSelected,
+              initValue: companyBrand
+          ),
+          _switch(),
+          Container(
+            height: ScreenUtil().setHeight(40),
+            width: ScreenUtil().width,
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(left: 16),
+            child: Text("关联场所：${widget.merchantDetailModel.ktvList.length}", style: Style.navTitle()),
+          ),
+          _selectBtnWidget(),
+          _showPlaceListWidget(),
+          _btnClickWidget(),
 
-class ListInput extends StatefulWidget {
+        ],
+      ),
+    );
+  }
 
-  final bool isLast;
-  final bool isRequired;
-  final String placeholder;
-  final String title;
+  Widget _switch(){
+    return Container(
+      padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text("是否启用", style: Style.listTitle(),),
+          Switch(
+            value: _switchSelected,
+            onChanged: (value){
+              print(value);
+              setState(() {
+                _switchSelected = value;
+              });
+            },
+          )
+        ],
+      ),
+    );
+  }
 
+  // 请选择按钮
+  Widget _selectBtnWidget(){
+    return InkWell(
+      child: Container(
+        color: Color.fromRGBO(239, 238, 243, 1),
+        width: MediaQuery.of(context).size.width,
+        height: ScreenUtil().setHeight(47),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                alignment: Alignment.center,
+                width: ScreenUtil().setWidth(14),
+                height: ScreenUtil().setHeight(14),
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(43, 200, 214, 1),
+                  borderRadius: BorderRadius.circular(10)
+                ),
+                child: Icon(Icons.add, size: ScreenUtil().setSp(14), color: Colors.white,),
+              ),
+              SizedBox(
+                width: ScreenUtil().setWidth(4),
+              ),
+              Text("请选择", style: TextStyle(
+                color: Color.fromRGBO(68, 68, 68, 1),
+                fontSize: ScreenUtil().setSp(14),
+                fontWeight: FontWeight.w600
+              ),)
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
-  ListInput({
-    Key key,
-    this.isRequired = true,
-    this.isLast = false,
-    this.placeholder = '请输入',
-    @required this.title,
+  // 展示场所列表
+  Widget _showPlaceListWidget(){
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: widget.merchantDetailModel.ktvList.map((item){
+          return _placeListItemWidget(item);
+        }).toList(),
+      ),
+    );
+  }
 
-  }):super(key: key);
-
-  @override
-  _ListInputState createState() => _ListInputState();
-}
-
-class _ListInputState extends State<ListInput> {
-
-  FocusNode _focusNode = FocusNode();  // 输入框焦点句柄
-  TextEditingController _textEditingController = TextEditingController(); // 输入框控制器
-  bool _cancelDisplay = false;
-  String inputValue = '';  // 输入框内容
-
-  @override
-  Widget build(BuildContext context) {
+  // 展示场所子项
+  Widget _placeListItemWidget(KtvDetailModel ktv){
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          color: Colors.white,
           padding: EdgeInsets.fromLTRB(16, 14, 16, 14),
+          color: Colors.white,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: Container(
-                  child: Text.rich(TextSpan(
-                      children: [
-                        TextSpan(
-                          text: widget.title,
-                          style: Style.listTitle()
-                        ),
-                        (){
-                          if(!widget.isRequired){
-                            return TextSpan(
-                                text: '(选填)',
-                                style: Style.placeHolder()
-                            );
-                          }else{
-                            return TextSpan();
-                          }
-                        }()
-                      ]
-                  )),
+              Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.only(right: 6, top: 4),
+                width: ScreenUtil().setWidth(14),
+                height: ScreenUtil().setHeight(14),
+                decoration: BoxDecoration(
+                    color: Color.fromRGBO(255, 91, 63, 1),
+                    borderRadius: BorderRadius.circular(10)
+                ),
+                child: Icon(
+                  Icons.remove,
+                  size: ScreenUtil().setSp(14),
+                  color: Colors.white,
                 ),
               ),
               Expanded(
-                flex: 4,
+                flex: 1,
                 child: Container(
-                  color: Colors.white30,
-                  child: TextField(
-                    controller: _textEditingController,
-                    onChanged: _onChanged,
-                    focusNode: _focusNode,
-                    style: TextStyle(
-                        color: Color.fromRGBO(102, 102, 102, 1)
-                    ),
-                    cursorWidth: 1,
-                    cursorColor: Colors.black,
-                    decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: widget.placeholder,
-                        hintStyle: Style.placeHolder()
-                    ),
+                  child: Text(
+                    ktv.name,
+                    style: Style.listTitle(),
                   ),
-                ),
-              ),
-              Opacity(
-                opacity: _cancelDisplay ? 1:0,
-                child: InkWell(
-                  child: Icon(
-                    Icons.cancel,
-                    size: ScreenUtil().setSp(20),
-                    color: Color.fromRGBO(150, 151, 153, 1),
-                  ),
-                  onTap: (){
-                    if(_cancelDisplay){
-                      _cancelBtn();
-                    }
-                  },
                 ),
               )
             ],
           ),
         ),
-        Opacity(
-          opacity: widget.isLast ? 0:1,
-          child: Divider(
-            height: 2,
-            color: Colors.grey,
-            indent: 20,
-          ),
-        )
-
-      ],
-    );
-  }
-
-  _onChanged(e){
-    inputValue = e;
-    _showCancel();
-  }
-
-  _showCancel(){
-    if(inputValue != '' && _focusNode.hasFocus){
-      _cancelDisplay = true;
-    }else{
-      _cancelDisplay = false;
-    }
-    setState(() {});
-  }
-
-  _cancelBtn(){
-    _textEditingController.text = '';
-    _cancelDisplay = false;
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    _focusNode.addListener((){
-      _showCancel();
-    });
-    super.initState();
-  }
-}
-
-class ListSelected extends StatefulWidget {
-  final bool isRequired;
-
-  ListSelected({
-    Key key,
-    this.isRequired = true
-  }):super(key: key);
-
-  @override
-  _ListSelectedState createState() => _ListSelectedState();
-}
-
-class _ListSelectedState extends State<ListSelected>{
-
-  OverlayEntry _overlayEntry;
-  Result result = new Result();
-  double customerItemExtent = 40;
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Container(
-          color: Colors.white,
-          padding: EdgeInsets.fromLTRB(16, 14, 16, 14),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: Text.rich(TextSpan(
-                    children: [
-                      TextSpan(
-                          text: 'vod品牌',
-                          style: Style.listTitle()
-                      ),
-                          (){
-                        if(!widget.isRequired){
-                          return TextSpan(
-                              text: '(选填)',
-                              style: Style.placeHolder()
-                          );
-                        }else{
-                          return TextSpan();
-                        }
-                      }()
-                    ]
-                )),
-
-              ),
-              Expanded(
-                flex: 4,
-                child: InkWell(
-                  child: Text(
-                    "请选择",
-                    style: Style.placeHolder(),
-                  ),
-                  onTap: overlyBtn,
-                ),
-              ),
-              SizedBox(
-                width: ScreenUtil().setWidth(20),
-                height: ScreenUtil().setHeight(20),
-              )
-            ],
-          ),
+        Divider(
+          height: 1,
+          indent: 16,
+          color: Color.fromRGBO(235, 237, 240, 1),
         )
       ],
     );
   }
 
-  overlyBtn() async{
-//    _overlayEntry = OverlayEntry(
-//      builder: (context){
-//        return Popup(
-//          remove: _remove,
-//        );
-//      }
-//    );
-//
-//    Overlay.of(context).insert(_overlayEntry);
-    Result tempResult = await CityPickers.showCityPicker(
-      context: context,
-//      itemExtent: customerItemExtent,
-//      itemBuilder: this.getItemBuilder());
-
-    );
-    print(tempResult);
-    if (tempResult == null) {
-      return;
-    }
-    this.setState(() {
-      result = tempResult;
-    });
-  }
-
-//  getItemBuilder() {
-//    if (customerItemBuilder) {
-//      return (item, list, index) {
-//        return Center(
-//            child: Text(item, maxLines: 1, style: TextStyle(fontSize: 55)));
-//      };
-//    } else {
-//      return null;
-//    }
-//  }
-
-  _remove(){
-
-    _overlayEntry.remove();
-  }
-
-
-  @override
-  void initState() {
-    super.initState();
-  }
-}
-
-class Popup extends StatefulWidget {
-
-  final Function remove;
-
-  Popup({Key key, this.remove}):super(key: key);
-
-  @override
-  _PopupState createState() => _PopupState();
-}
-
-class _PopupState extends State<Popup> with SingleTickerProviderStateMixin{
-
-  Animation<double> animation;
-  AnimationController controller;
-
-  @override
-  Widget build(BuildContext context) {
+  // 确认按钮
+  Widget _btnClickWidget(){
     return Container(
-      child: Stack(
-          children: <Widget>[
-            Listener(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                color: Color.fromRGBO(0, 0, 0, 0.6),
-              ),
-              onPointerDown: (PointerDownEvent event){
-                controller.reverse();
-                Future.delayed(Duration(milliseconds: 350),(){
-                  widget.remove();
-                });
-//
-              },
-            ),
-            Positioned(
-              bottom: animation.value,
-              left: 0,
-              child: ConstrainedBox(
-                constraints: BoxConstraints.tight(
-                    Size(MediaQuery.of(context).size.width, 300)
-                ),
-                child: DecoratedBox(
-                    decoration: BoxDecoration(color: Colors.blue)
-                ),
-              ),
-            ),
-          ]
+      width: ScreenUtil().width,
+      margin: EdgeInsets.fromLTRB(16, 30, 16, 30),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors:[Color.fromRGBO(61, 158, 255, 1),Color.fromRGBO(24, 82, 243, 1)]),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: FlatButton(
+        padding: EdgeInsets.only(top: 10, bottom: 10),
+        child: Text("保存", style: TextStyle(
+          color: Colors.white,
+          fontSize: ScreenUtil().setSp(16)
+        ),),
+        onPressed: (){
+          print(name);
+
+        },
       ),
     );
   }
 
   @override
   void initState() {
-    double start = -300;
-    double end = 0;
-    controller = new AnimationController(
-        duration: const Duration(milliseconds: 300), vsync: this);
-    //图片宽高从0变到300
-    //使用弹性曲线
-    animation=CurvedAnimation(parent: controller, curve: Curves.easeInOut);
+    name = widget.merchantDetailModel.name;
 
-    animation = new Tween(begin: start, end: end).animate(animation)
-      ..addListener(() {
-        print(animation.value);
-        setState(()=>{});
-      });
-    //启动动画(正向执行)
-    controller.forward();
+
+
     super.initState();
   }
+
+  vodSelected(index){
+    print(index);
+    setState(() {
+      vodName = names[index];
+    });
+  }
+
 }
+
+
 
 
 

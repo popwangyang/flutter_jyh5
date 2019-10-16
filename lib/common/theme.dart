@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 final appTheme = ThemeData(
   primarySwatch: Colors.blue,
   textTheme: TextTheme(
+    body1: TextStyle(color: Color(0xFF888888), fontSize: 12.0),
     display4: TextStyle(
       fontFamily: 'PingFangSC-Regular,PingFangSC;',
       fontWeight: FontWeight.w400,

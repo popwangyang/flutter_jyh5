@@ -2,6 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Style {
+  static TextStyle inputText(){
+    return TextStyle(
+        color: Color.fromRGBO(102, 102, 102, 1),
+        fontSize: ScreenUtil().setSp(14)
+    );
+  }
+  static TextStyle pickListText(){
+    return TextStyle(
+        color: Color.fromRGBO(0, 0, 0, 1),
+        fontSize: ScreenUtil().setSp(16)
+    );
+  }
+  static TextStyle buttonText(){
+    return TextStyle(
+        color: Color.fromRGBO(25, 137, 250, 1),
+        fontSize: ScreenUtil().setSp(14)
+    );
+  }
+
   static TextStyle placeHolder(){
     return TextStyle(
       fontSize: ScreenUtil.getInstance().setSp(14),

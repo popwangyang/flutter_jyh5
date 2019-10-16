@@ -47,6 +47,7 @@ class MerchantList {
 // 商户详情模型
 class MerchantDetailModel {
   int merchantID;
+  String name;
   String phone;
   String brandName;
   String email;
@@ -61,11 +62,13 @@ class MerchantDetailModel {
     this.createDate,
     this.email,
     this.merchantID,
-    this.phone
+    this.phone,
+    this.name
   });
 
   factory MerchantDetailModel.fromJson(dynamic json){
     return MerchantDetailModel(
+      name: json['name'],
       merchantID: json['acc']['id'],
       phone: json['acc']['phone'],
       brandName: json['acc']['brand'] == null ? '暂无':json['acc']['brand']['name'],

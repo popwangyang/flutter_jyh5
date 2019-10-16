@@ -112,7 +112,9 @@ class _MerchantDetailState extends State<MerchantDetail> {
             onPressed: () {
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) {
-                    return MerchantEdited();
+                    return MerchantEdited(
+                      merchantDetailModel: merchantDetailModel,
+                    );
                   })
               );
             }
