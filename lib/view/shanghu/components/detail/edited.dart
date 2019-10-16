@@ -3,6 +3,7 @@ import 'package:jy_h5/common/components/Appbar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jy_h5/common/style.dart';
 import 'package:jy_h5/common/components/ListSelect.dart';
+import 'package:city_pickers/city_pickers.dart';
 
 
 class MerchantEdited extends StatefulWidget {
@@ -202,6 +203,8 @@ class ListSelected extends StatefulWidget {
 class _ListSelectedState extends State<ListSelected>{
 
   OverlayEntry _overlayEntry;
+  Result result = new Result();
+  double customerItemExtent = 40;
 
 
   @override
@@ -258,19 +261,44 @@ class _ListSelectedState extends State<ListSelected>{
     );
   }
 
-  overlyBtn(){
-    _overlayEntry = OverlayEntry(
-      builder: (context){
-        return Popup(
-          remove: _remove,
-        );
-      }
-    );
+  overlyBtn() async{
+//    _overlayEntry = OverlayEntry(
+//      builder: (context){
+//        return Popup(
+//          remove: _remove,
+//        );
+//      }
+//    );
+//
+//    Overlay.of(context).insert(_overlayEntry);
+    Result tempResult = await CityPickers.showCityPicker(
+      context: context,
+//      itemExtent: customerItemExtent,
+//      itemBuilder: this.getItemBuilder());
 
-    Overlay.of(context).insert(_overlayEntry);
+    );
+    print(tempResult);
+    if (tempResult == null) {
+      return;
+    }
+    this.setState(() {
+      result = tempResult;
+    });
   }
 
+//  getItemBuilder() {
+//    if (customerItemBuilder) {
+//      return (item, list, index) {
+//        return Center(
+//            child: Text(item, maxLines: 1, style: TextStyle(fontSize: 55)));
+//      };
+//    } else {
+//      return null;
+//    }
+//  }
+
   _remove(){
+
     _overlayEntry.remove();
   }
 
@@ -308,7 +336,11 @@ class _PopupState extends State<Popup> with SingleTickerProviderStateMixin{
                 color: Color.fromRGBO(0, 0, 0, 0.6),
               ),
               onPointerDown: (PointerDownEvent event){
-                widget.remove();
+                controller.reverse();
+                Future.delayed(Duration(milliseconds: 350),(){
+                  widget.remove();
+                });
+//
               },
             ),
             Positioned(
