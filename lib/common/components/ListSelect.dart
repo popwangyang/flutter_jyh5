@@ -28,6 +28,7 @@ class ListSelected extends StatefulWidget {
 class _ListSelectedState extends State<ListSelected>{
 
   double customerItemExtent = 40;
+  String _value;
 
 
   @override
@@ -67,8 +68,8 @@ class _ListSelectedState extends State<ListSelected>{
                 Expanded(
                   flex: 4,
                   child: (){
-                    if(widget.initValue != null){
-                      return Text(widget.initValue, style: Style.inputText(),);
+                    if(_value != null){
+                      return Text(_value, style: Style.inputText(),);
                     }else{
                       return Text('请选择', style: Style.placeHolder());
                     }
@@ -86,7 +87,7 @@ class _ListSelectedState extends State<ListSelected>{
                 context,
                 widget.data,
                 _onSelected,
-                widget.initValue
+                _value
             );
           },
         ),
@@ -102,8 +103,18 @@ class _ListSelectedState extends State<ListSelected>{
     );
   }
 
+
   _onSelected(int index){
+    setState(() {
+      _value = widget.data[index];
+    });
     widget.onChange(index);
+  }
+
+  @override
+  void initState() {
+    _value = widget.initValue;
+    super.initState();
   }
 
 }

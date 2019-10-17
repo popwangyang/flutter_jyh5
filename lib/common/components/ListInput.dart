@@ -32,11 +32,9 @@ class _ListInputState extends State<ListInput> {
   FocusNode _focusNode = FocusNode();  // 输入框焦点句柄
   TextEditingController _textEditingController = TextEditingController(); // 输入框控制器
   bool _cancelDisplay = false;
-  String inputValue = '';  // 输入框内容
 
   @override
   Widget build(BuildContext context) {
-    inputValue = widget.value;
 
     return Column(
       children: <Widget>[
@@ -121,13 +119,12 @@ class _ListInputState extends State<ListInput> {
   }
 
   _onChanged(e){
-    inputValue = e;
     widget.onChange(e);
     _showCancel();
   }
 
   _showCancel(){
-    if(inputValue != '' && _focusNode.hasFocus){
+    if(_textEditingController.text != '' && _focusNode.hasFocus){
       _cancelDisplay = true;
     }else{
       _cancelDisplay = false;
@@ -137,6 +134,7 @@ class _ListInputState extends State<ListInput> {
 
   _cancelBtn(){
     _textEditingController.text = '';
+    widget.onChange('');
     _cancelDisplay = false;
     setState(() {});
   }

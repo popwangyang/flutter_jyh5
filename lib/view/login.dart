@@ -231,8 +231,12 @@ class _LoginPageState extends State<LoginPage> {
   };
 
   Map rule = {
-    'username': Rule(require: true, message: '用户名不能为空', type: ruleType.Email),
-    'password': Rule(require: true, message: '请输入密码', type: ruleType.Password),
+    'username': [
+      Rule(require: true, message: '用户名不能为空')
+    ],
+    'password': [
+      Rule(require: true, message: '请输入密码')
+    ],
   };
 
 

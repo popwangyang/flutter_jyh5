@@ -13,6 +13,9 @@ import 'package:jy_h5/model/merchant.dart';
 import 'package:provider/provider.dart';
 import 'package:jy_h5/store/model/loginModel.dart';
 import 'package:jy_h5/model/ktv.dart';
+import 'package:jy_h5/libs/utils.dart';
+import 'package:jy_h5/model/validate/rule.dart';
+import 'package:jy_h5/view/Search/search.dart';
 
 
 
@@ -30,18 +33,12 @@ class _MerchantEditedState extends State<MerchantEdited> {
 
   List names = [];
   String vodName;
-  bool _switchSelected = true;
   Login loginData;
   String name; // 商户名称
   String phone; // 账号;
   String email;  // 邮箱
-  String companyBrand;  // 品牌名称
-
-
-
-
-
-
+  String brandName;  // 品牌名称
+  bool accountStatues;   // 是否启用
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +46,6 @@ class _MerchantEditedState extends State<MerchantEdited> {
     loginData = Provider.of<Login>(context);
     names = loginData.companyBrands.map((item) => item.name).toList();
 
-    companyBrand = widget.merchantDetailModel.brandName;
 
     return Container(
       child: Scaffold(
@@ -77,28 +73,38 @@ class _MerchantEditedState extends State<MerchantEdited> {
           ListInput(
             title: '商户名称',
             placeholder: '请输入商户名称',
-            value: widget.merchantDetailModel.name,
+            value: fromData['name'],
             onChange: (e){
               print(e);
-              name = e;
+              fromData['name'] = e;
             },
           ),
           ListInput(
             title: '账号',
             placeholder: '请输入账号',
-            value: widget.merchantDetailModel.phone,
+            value: fromData['phone'],
+            onChange: (e){
+              print(e);
+              fromData['phone'] = e;
+            },
           ),
           ListInput(
             title: '邮箱号',
             placeholder: '请输入邮箱号',
-            value: widget.merchantDetailModel.email,
+            value: fromData['email'],
             isRequired: false,
+            onChange: (e){
+              print(e);
+              fromData['email'] = e;
+            },
           ),
           ListSelected(
               title: '品牌名称',
               data: names,
-              onChange: vodSelected,
-              initValue: companyBrand
+              onChange: (index){
+                fromData['brandName'] = names[index];
+              },
+              initValue: fromData['brandName']
           ),
           _switch(),
           Container(
@@ -111,7 +117,6 @@ class _MerchantEditedState extends State<MerchantEdited> {
           _selectBtnWidget(),
           _showPlaceListWidget(),
           _btnClickWidget(),
-
         ],
       ),
     );
@@ -127,12 +132,9 @@ class _MerchantEditedState extends State<MerchantEdited> {
         children: <Widget>[
           Text("是否启用", style: Style.listTitle(),),
           Switch(
-            value: _switchSelected,
+            value: fromData['accountStatues'],
             onChanged: (value){
-              print(value);
-              setState(() {
-                _switchSelected = value;
-              });
+              fromData['accountStatues'] = value;
             },
           )
         ],
@@ -173,6 +175,13 @@ class _MerchantEditedState extends State<MerchantEdited> {
           ),
         ),
       ),
+      onTap: (){
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) {
+              return Search();
+            })
+        );
+      },
     );
   }
 
@@ -250,28 +259,49 @@ class _MerchantEditedState extends State<MerchantEdited> {
           color: Colors.white,
           fontSize: ScreenUtil().setSp(16)
         ),),
-        onPressed: (){
-          print(name);
-
-        },
+        onPressed: _fromBtn,
       ),
     );
   }
 
+  Map fromData = {
+    'name': null,
+    'phone': null,
+    'email': null,
+    'brandName': null,
+    'accountStatues': true,
+  };
+
+  Map rule = {
+    'name': [
+      Rule(require: true, message: '商户名称不能为空',)
+    ],
+    'phone': [
+      Rule(require: true, message: '账号不能为空',),
+      Rule(message: '账号格式不正确', type: ruleType.Phone),
+    ],
+    'email': [
+      Rule(message: '邮箱格式不正确', type: ruleType.Email),
+    ],
+    'brandName':[
+      Rule(require: true, message: '品牌名不能为空',)
+    ],
+  };
+
+
   @override
   void initState() {
-    name = widget.merchantDetailModel.name;
-
-
-
+    fromData['name'] = widget.merchantDetailModel.name;
+    fromData['phone'] = widget.merchantDetailModel.phone;
+    fromData['email'] = widget.merchantDetailModel.email;
+    fromData['brandName'] = widget.merchantDetailModel.brandName;
+    fromData['isUsed'] = widget.merchantDetailModel.accountStatues;
     super.initState();
   }
 
-  vodSelected(index){
-    print(index);
-    setState(() {
-      vodName = names[index];
-    });
+  _fromBtn(){
+    bool validateState = Utils.validate(fromData, rule, context);
+    print(validateState);
   }
 
 }

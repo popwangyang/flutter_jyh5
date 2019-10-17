@@ -46,8 +46,6 @@ class Utils{
     return completer.future;
   }
 
-
-
   static String getRandomNumber(){
     String alphabet = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
     int strLength = 30;
@@ -61,27 +59,33 @@ class Utils{
   static bool validate(Map fromData, Map rules, BuildContext context){
     Map result = {};
     rules.forEach((item, value){
-      var rule = rules[item];
-      if(rule.require){
-        if(fromData[item] == ''){
-          result[item] = false;
-          return;
-        }
-      }
+
+     List ruleList = rules[item];
+
+     for(var i = 0; i < ruleList.length; i++){
+       if(!ruleList[i].validate(fromData[item])){
+         result[item] = ruleList[i].message;
+         return;
+       }
+     }
+
     });
-    String name;
+    print(result);
+    String errorMsg;
     result.forEach((key, value){
-      if(name == null && !value){
-        name = key;
+      if(errorMsg == null){
+        errorMsg = value;
       }
     });
-    if(name != null){
-      Toast.show(rules[name].message, context);
+    if(errorMsg != null){
+      Toast.show(errorMsg, context, gravity: 1);
     }
 
-    return name == null ? true:false;
+    return errorMsg == null ? true:false;
 
   }
+
+
 
 
 }
