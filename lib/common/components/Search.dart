@@ -3,10 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Search extends StatelessWidget {
 
-  final String plplaceholder;
+  final String placeholder;
+  final Function inputBtn;
+  final Function userBtn;
   Search({
     Key key,
-    this.plplaceholder = "请输入"
+    this.placeholder = "请输入",
+    this.inputBtn,
+    this.userBtn
   }): super(key: key);
 
   @override
@@ -19,14 +23,17 @@ class Search extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Container(
-            width: ScreenUtil.getInstance().setWidth(295),
-            height: ScreenUtil.getInstance().setHeight(35),
-            decoration: BoxDecoration(
-              color: Color.fromRGBO(239, 238, 243, 1),
-              borderRadius: BorderRadius.circular(18),
+          InkWell(
+            child: Container(
+              width: ScreenUtil.getInstance().setWidth(295),
+              height: ScreenUtil.getInstance().setHeight(35),
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(239, 238, 243, 1),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: _searchContent(),
             ),
-            child: _searchContent(),
+            onTap: inputBtn,
           ),
           InkWell(
             child: Container(
@@ -45,9 +52,7 @@ class Search extends StatelessWidget {
               ),
               child: Image.asset('lib/assets/image/indexUS.png', width: 16, height: 16,fit: BoxFit.contain,),
             ),
-            onTap: (){
-              print("ppppp");
-            },
+            onTap: userBtn,
             highlightColor: Colors.blue
           )
         ],
@@ -63,7 +68,7 @@ class Search extends StatelessWidget {
             padding: EdgeInsets.only(right: 4),
             child:Icon(Icons.search, size: ScreenUtil.getInstance().setSp(16), color: Color.fromRGBO(204, 204, 204, 1),),
           ),
-          Text(plplaceholder, style: TextStyle(
+          Text(placeholder, style: TextStyle(
             fontSize: ScreenUtil.getInstance().setSp(12),
             color: Color.fromRGBO(204, 204, 204, 1),
             fontWeight: FontWeight.w400,

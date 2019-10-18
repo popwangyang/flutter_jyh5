@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import '../../common/components/Appbar.dart';
 import '../../common/components/Search.dart';
@@ -10,8 +9,9 @@ import '../../model/merchant.dart';
 import 'components/detail/detail.dart';
 import 'package:jy_h5/common/components/loading.dart';
 import 'package:jy_h5/common/components/Error.dart';
+import 'package:jy_h5/view/Search/search.dart' as SearchPage;
 import 'dart:convert';
-
+import '../../api/ktv.api.dart';
 
 class ShanghuPage extends StatefulWidget {
   @override
@@ -42,7 +42,30 @@ class _ShanghuPageState extends State<ShanghuPage>  with AutomaticKeepAliveClien
               title: '商户管理',
             ),
             Search(
-              plplaceholder: '请输入商户名称',
+              placeholder: '请输入商户名称',
+              inputBtn: () async{
+                print('inputBtn');
+                var backResult = await Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) {
+                      return SearchPage.Search(
+                        placeholder: '请输入商户名称',
+                        pageTitle: '',
+                        searchFun: _searchFun,
+
+                      );
+                    })
+                );
+                print(backResult);
+                if(null != backResult){
+                  Navigator.of(context).push(
+                      new MaterialPageRoute(builder: (_) {
+                        return MerchantDetail(merchant: Merchant.fromJson(backResult),);
+                      }));
+                }
+              },
+              userBtn: (){
+                print('userBtn');
+              },
             ),
             _divider(),
             Expanded(
@@ -95,6 +118,19 @@ class _ShanghuPageState extends State<ShanghuPage>  with AutomaticKeepAliveClien
       height: 1,
       color: Color.fromRGBO(246, 246, 246, 1),
     );
+  }
+
+  _searchFun(data) async{
+    Completer completer = Completer();
+    try{
+      var result = await getMerchantList(data, context);
+      var dataList = json.decode(result.toString())['results'];
+      print('=======$dataList}========');
+      completer.complete(dataList);
+    }catch(err){
+      completer.completeError(err);
+    }
+    return completer.future;
   }
 
   Future _refresh() async{
@@ -166,9 +202,6 @@ class _ShanghuPageState extends State<ShanghuPage>  with AutomaticKeepAliveClien
 
   Future getData() async{
     Completer completer = Completer();
-    setState(() {
-      pageStatues = 1;
-    });
     var sendData = {
       'page': page,
       'page_size': pageSize,
@@ -179,7 +212,7 @@ class _ShanghuPageState extends State<ShanghuPage>  with AutomaticKeepAliveClien
       var data = json.decode(results.toString());
       MerchantList merchantList = MerchantList.fromJson(data['results']);
       if(merchantList.data.length > 0){
-        pageStatues = 2;
+          pageStatues = 2;
       }else{
         pageStatues = 4;
       }

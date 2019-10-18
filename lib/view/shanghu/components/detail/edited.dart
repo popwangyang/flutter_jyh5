@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -16,14 +17,22 @@ import 'package:jy_h5/model/ktv.dart';
 import 'package:jy_h5/libs/utils.dart';
 import 'package:jy_h5/model/validate/rule.dart';
 import 'package:jy_h5/view/Search/search.dart';
+import 'package:jy_h5/api/ktv.api.dart';
+import 'package:jy_h5/model/ktv.dart';
+import 'package:toast/toast.dart';
 
 
 
 class MerchantEdited extends StatefulWidget {
 
   final MerchantDetailModel merchantDetailModel;
+  final bool isEdited;
 
-  MerchantEdited({Key key, this.merchantDetailModel}):super(key: key);
+  MerchantEdited({
+    Key key,
+    this.merchantDetailModel,
+    this.isEdited = true
+  }):super(key: key);
 
   @override
   _MerchantEditedState createState() => _MerchantEditedState();
@@ -37,8 +46,43 @@ class _MerchantEditedState extends State<MerchantEdited> {
   String name; // 商户名称
   String phone; // 账号;
   String email;  // 邮箱
+  String password; // 密码
   String brandName;  // 品牌名称
   bool accountStatues;   // 是否启用
+  List ktvList;  // 商户门店列表
+  var backResult;  // 返回值
+
+  Map<String, dynamic> fromData = {
+    'name': null,
+    'phone': null,
+    'email': null,
+    'password': null,
+    'brandName': null,
+    'accountStatues': true,
+    'ktvList': [],
+  };
+
+  Map rule = {
+    'name': [
+      Rule(require: true, message: '商户名称不能为空',)
+    ],
+    'phone': [
+      Rule(require: true, message: '账号不能为空',),
+      Rule(message: '账号格式不正确', type: ruleType.Phone),
+    ],
+    'email': [
+      Rule(message: '邮箱格式不正确', type: ruleType.Email),
+    ],
+    'password': [
+      Rule(require: true, message: '密码不能为空',),
+    ],
+    'brandName':[
+      Rule(require: true, message: '品牌名不能为空',)
+    ],
+    'ktvList': [
+      Rule(require: true, message: '请添加选择门店', type: ruleType.Array),
+    ]
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +142,21 @@ class _MerchantEditedState extends State<MerchantEdited> {
               fromData['email'] = e;
             },
           ),
+          (){
+            if(!widget.isEdited){
+              return ListInput(
+                title: '密码',
+                placeholder: '请输入密码',
+                value: fromData['password'],
+                isRequired: false,
+                onChange: (e){
+                  fromData['password'] = e;
+                },
+              );
+            }else{
+              return Container();
+            }
+          }(),
           ListSelected(
               title: '品牌名称',
               data: names,
@@ -112,7 +171,7 @@ class _MerchantEditedState extends State<MerchantEdited> {
             width: ScreenUtil().width,
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.only(left: 16),
-            child: Text("关联场所：${widget.merchantDetailModel.ktvList.length}", style: Style.navTitle()),
+            child: Text("关联场所：${fromData['ktvList'].length}", style: Style.navTitle()),
           ),
           _selectBtnWidget(),
           _showPlaceListWidget(),
@@ -175,12 +234,19 @@ class _MerchantEditedState extends State<MerchantEdited> {
           ),
         ),
       ),
-      onTap: (){
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) {
-              return Search();
+      onTap: () async{
+        var backResult = await Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) {
+              return Search(
+                pageTitle: '选择门店',
+                placeholder: '请输入门店信息',
+                searchFun: _searchFun,
+              );
             })
         );
+        if(null != backResult){
+          _addKtv(KTV.fromJson(backResult));
+        }
       },
     );
   }
@@ -190,7 +256,7 @@ class _MerchantEditedState extends State<MerchantEdited> {
     return Container(
       color: Colors.white,
       child: Column(
-        children: widget.merchantDetailModel.ktvList.map((item){
+        children: (fromData['ktvList'] as List).map((item){
           return _placeListItemWidget(item);
         }).toList(),
       ),
@@ -198,7 +264,7 @@ class _MerchantEditedState extends State<MerchantEdited> {
   }
 
   // 展示场所子项
-  Widget _placeListItemWidget(KtvDetailModel ktv){
+  Widget _placeListItemWidget(KTV ktv){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -217,10 +283,15 @@ class _MerchantEditedState extends State<MerchantEdited> {
                     color: Color.fromRGBO(255, 91, 63, 1),
                     borderRadius: BorderRadius.circular(10)
                 ),
-                child: Icon(
-                  Icons.remove,
-                  size: ScreenUtil().setSp(14),
-                  color: Colors.white,
+                child: InkWell(
+                  child: Icon(
+                    Icons.remove,
+                    size: ScreenUtil().setSp(14),
+                    color: Colors.white,
+                  ),
+                  onTap: (){
+                    _removeKtv(ktv);
+                  },
                 ),
               ),
               Expanded(
@@ -264,29 +335,40 @@ class _MerchantEditedState extends State<MerchantEdited> {
     );
   }
 
-  Map fromData = {
-    'name': null,
-    'phone': null,
-    'email': null,
-    'brandName': null,
-    'accountStatues': true,
-  };
+  _addKtv(KTV ktv){
+    var flag;
+    flag = fromData['ktvList'].indexWhere((item){
+      return item.id == ktv.id;
+    });
+    if(flag == -1){
+      setState(() {
+        fromData['ktvList'].add(ktv);
+      });
+    }else{
+      Toast.show('已存在门店,请勿重复添加', context, duration: 2, gravity: 1);
+    }
+  }
 
-  Map rule = {
-    'name': [
-      Rule(require: true, message: '商户名称不能为空',)
-    ],
-    'phone': [
-      Rule(require: true, message: '账号不能为空',),
-      Rule(message: '账号格式不正确', type: ruleType.Phone),
-    ],
-    'email': [
-      Rule(message: '邮箱格式不正确', type: ruleType.Email),
-    ],
-    'brandName':[
-      Rule(require: true, message: '品牌名不能为空',)
-    ],
-  };
+  _removeKtv(KTV ktv){
+    setState(() {
+      fromData['ktvList'].remove(ktv);
+    });
+  }
+
+  _searchFun(data) async{
+    Completer completer = Completer();
+    try{
+      var result = await getKTVList(data, context);
+      var dataList = json.decode(result.toString())['results'];
+      print('=======$dataList}========');
+      completer.complete(dataList);
+    }catch(err){
+      completer.completeError(err);
+    }
+    return completer.future;
+  }
+
+
 
 
   @override
@@ -296,12 +378,50 @@ class _MerchantEditedState extends State<MerchantEdited> {
     fromData['email'] = widget.merchantDetailModel.email;
     fromData['brandName'] = widget.merchantDetailModel.brandName;
     fromData['isUsed'] = widget.merchantDetailModel.accountStatues;
+    fromData['ktvList'].addAll(widget.merchantDetailModel.ktvList);
     super.initState();
   }
 
-  _fromBtn(){
+  _fromBtn() async{
+    print(fromData);
+    if(widget.isEdited){
+      rule.remove('password');
+      fromData.remove('password');
+    }
     bool validateState = Utils.validate(fromData, rule, context);
     print(validateState);
+    if(validateState){
+      var id = widget.merchantDetailModel.id;
+
+      var brand = loginData.companyBrands.firstWhere((item){
+         return item.name == fromData['brandName'];
+      });
+      var ktvID = fromData['ktvList'].map((item) => item.id.toString()).toList();
+      var sendData = {
+        'brand': brand.id,
+        'name': fromData['name'],
+        'email': fromData['email'],
+        'phone': fromData['phone'],
+        'ktv': ktvID,
+        'status': fromData['accountStatues']
+      };
+      try{
+        if(widget.isEdited){
+          await putMerchantDetail(id, sendData, context);
+          Toast.show('修改成功', context, duration: 2, gravity: 1);
+          Future.delayed(Duration(seconds: 1),(){
+            Navigator.of(context).pushNamed('indexPage');
+          });
+        }else{
+          sendData['password'] = fromData['passwrod'];
+          await createMerchantDetail(sendData, context);
+          Toast.show('创建成功', context, duration: 2, gravity: 1);
+        }
+      }catch(err){
+        print(err);
+        Toast.show('修改失败', context, duration: 2, gravity: 1);
+      }
+    }
   }
 
 }

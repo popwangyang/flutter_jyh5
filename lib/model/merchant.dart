@@ -47,6 +47,7 @@ class MerchantList {
 // 商户详情模型
 class MerchantDetailModel {
   int merchantID;
+  int id;
   String name;
   String phone;
   String brandName;
@@ -62,6 +63,7 @@ class MerchantDetailModel {
     this.createDate,
     this.email,
     this.merchantID,
+    this.id,
     this.phone,
     this.name
   });
@@ -69,13 +71,14 @@ class MerchantDetailModel {
   factory MerchantDetailModel.fromJson(dynamic json){
     return MerchantDetailModel(
       name: json['name'],
+      id: json['id'],
       merchantID: json['acc']['id'],
       phone: json['acc']['phone'],
       brandName: json['acc']['brand'] == null ? '暂无':json['acc']['brand']['name'],
       email: json['acc']['email'],
       accountStatues: json['acc']['is_active'],
       createDate: json['acc']['create_date'],
-      ktvList: json['ktv_list'].map((i) => KtvDetailModel.fromJson(i)).toList()
+      ktvList: json['ktv_list'].map((i) => KTV.fromJson(i)).toList()
     );
   }
 

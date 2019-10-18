@@ -2,7 +2,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jy_h5/common/style.dart';
 
 class SearchWidget extends StatefulWidget {
 
@@ -58,6 +57,7 @@ class _SearchWidgetState extends State<SearchWidget> {
               child: TextField(
                 controller: _unameController, //设置controller
                 focusNode: _commentFocus,
+                onChanged: _onChanged,
                 cursorWidth: 1,
                 cursorColor: Colors.black,
                 style: TextStyle(
@@ -93,6 +93,7 @@ class _SearchWidgetState extends State<SearchWidget> {
   _cancelBtn(){
     if(cancelBtnStatues){
       _unameController.text = '';
+      _onChanged('');
     }
   }
 
@@ -105,12 +106,16 @@ class _SearchWidgetState extends State<SearchWidget> {
     });
   }
 
+  _onChanged(e){
+    _inputChange(e);
+  }
+
   @override
   void initState() {
     cancelBtnStatues = false;
     _unameController.addListener((){
+      print('_unameController');
       setState(() {
-        _inputChange(_unameController.text);
         cancelBtnStatues = _unameController.text != '' ? true:false;
       });
     });

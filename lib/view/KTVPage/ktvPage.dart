@@ -39,7 +39,7 @@ class _KtvPageState extends State<KtvPage>  with AutomaticKeepAliveClientMixin  
               title: 'KTV管理',
             ),
             Search(
-              plplaceholder: '请输入KTV名称',
+              placeholder: '请输入KTV名称',
             ),
             _divider(),
             Expanded(
@@ -94,6 +94,9 @@ class _KtvPageState extends State<KtvPage>  with AutomaticKeepAliveClientMixin  
   }
 
   _reload() async{
+    setState(() {
+      pageStatues = 1;
+    });
     await getData();
   }
 
@@ -102,7 +105,6 @@ class _KtvPageState extends State<KtvPage>  with AutomaticKeepAliveClientMixin  
     try{
       page = 1;
       KtvList ktvList = await getData();
-      completer.complete(ktvList.data);
       setState(() {
         dataList = ktvList.data;
       });
@@ -152,9 +154,6 @@ class _KtvPageState extends State<KtvPage>  with AutomaticKeepAliveClientMixin  
 
   Future getData() async{
     Completer completer = Completer();
-    setState(() {
-      pageStatues = 1;
-    });
     var sendData = {
       'page': page,
       'page_size': pageSize,
