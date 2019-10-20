@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:jy_h5/common/components/ListPicker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../style.dart';
@@ -29,6 +30,11 @@ class _ListSelectedState extends State<ListSelected>{
 
   double customerItemExtent = 40;
   String _value;
+  int _position;
+
+  FixedExtentScrollController scrollController;
+
+  var pick;
 
 
   @override
@@ -83,11 +89,34 @@ class _ListSelectedState extends State<ListSelected>{
             ),
           ),
           onTap: (){
+            _position = widget.data.indexOf(_value) == -1 ?
+            0:widget.data.indexOf(_value);
+            print(_position);
+            scrollController = FixedExtentScrollController(
+                initialItem: _position
+            );
+            pick = CupertinoPicker.builder(
+                itemExtent: 40,
+                scrollController: scrollController,
+                backgroundColor: Colors.transparent,
+                onSelectedItemChanged: (position){
+                  print("========$position==========");
+                  _position = position;
+                },
+                childCount: widget.data.length,
+                itemBuilder: (context, val){
+                  return Center(
+                    child: Text(
+                      widget.data[val],
+                      style: Style.pickListText(),
+                    ),
+                  );
+                });
             ListPicker.pickerList(
-                context,
-                widget.data,
-                _onSelected,
-                _value
+              context,
+              child: pick,
+              height: 300,
+              onSelected: _onSelected
             );
           },
         ),
@@ -104,11 +133,12 @@ class _ListSelectedState extends State<ListSelected>{
   }
 
 
-  _onSelected(int index){
+  _onSelected(){
+    print(_position);
     setState(() {
-      _value = widget.data[index];
+      _value = widget.data[_position];
     });
-    widget.onChange(index);
+    widget.onChange(_position);
   }
 
   @override

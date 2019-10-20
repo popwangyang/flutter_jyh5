@@ -41,10 +41,11 @@ class HttpRequest {
       print("错误之前");
       // Do something with response error
       int stateCode = e.response.statusCode;
+      print(e.response.data['message']);
       if(stateCode == 401){
         Navigator.pushNamed(context, 'error_404');
       }else if(stateCode == 400){
-        Toast.show(e.response.data['message'], context, duration: 2);
+        Toast.show(e.response.data['message'], context, duration: 2, gravity: 1);
       }
       return e; //continue
     });

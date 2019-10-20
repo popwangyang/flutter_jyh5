@@ -6,38 +6,41 @@ class ListPicker {
 
   static pickerList(
       BuildContext context,
-      List data,
-      Function onSelected,
-      String initValue
-      ){
+      {
+        List data,
+        Function onSelected,
+        String initValue,
+        Widget child,
+        double height
+      }){
 
-    int index = 0;
-    FixedExtentScrollController scrollController = FixedExtentScrollController(
-        initialItem: data.indexOf(initValue) == -1 ? 0:data.indexOf(initValue)
-    );
+//    int index = 0;
+//    FixedExtentScrollController scrollController = FixedExtentScrollController(
+//        initialItem: data.indexOf(initValue) == -1 ? 0:data.indexOf(initValue)
+//    );
 
 
-    final picker  = CupertinoPicker.builder(
-        itemExtent: 40,
-        scrollController: scrollController,
-        backgroundColor: Colors.transparent,
-        onSelectedItemChanged: (position){
-          index = position;
-        },
-        childCount: data.length,
-        itemBuilder: (context, val){
-          return Center(
-            child: Text(
-              data[val],
-              style: Style.pickListText(),
-            ),
-          );
-    });
+//    final picker  = CupertinoPicker.builder(
+//        itemExtent: 40,
+//        scrollController: scrollController,
+//        backgroundColor: Colors.transparent,
+//        onSelectedItemChanged: (position){
+//          index = position;
+//        },
+//        childCount: data.length,
+//        itemBuilder: (context, val){
+//          return Center(
+//            child: Text(
+//              data[val],
+//              style: Style.pickListText(),
+//            ),
+//          );
+//    });
 
     showCupertinoModalPopup(context: context, builder: (context){
       return Container(
         color: Colors.white,
-        height: 300,
+        height: height,
         child: Column(
           children: <Widget>[
             Container(
@@ -63,7 +66,7 @@ class ListPicker {
                     child: Text("确定", style: Style.buttonText(),),
                     onPressed: (){
                       Navigator.of(context).pop();
-                      onSelected(index);
+                      onSelected();
                     },
                   )
                 ],
@@ -71,7 +74,7 @@ class ListPicker {
             ),
             Expanded(
               flex: 1,
-              child: picker,
+              child: child,
             )
           ],
         ),

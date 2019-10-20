@@ -44,28 +44,19 @@ class _ShanghuPageState extends State<ShanghuPage>  with AutomaticKeepAliveClien
             Search(
               placeholder: '请输入商户名称',
               inputBtn: () async{
-                print('inputBtn');
-                var backResult = await Navigator.of(context).push(
+                Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) {
                       return SearchPage.Search(
                         placeholder: '请输入商户名称',
                         pageTitle: '',
                         searchFun: _searchFun,
+                        btnItemFun: _btnItemFun,
 
                       );
                     })
                 );
-                print(backResult);
-                if(null != backResult){
-                  Navigator.of(context).push(
-                      new MaterialPageRoute(builder: (_) {
-                        return MerchantDetail(merchant: Merchant.fromJson(backResult),);
-                      }));
-                }
               },
-              userBtn: (){
-                print('userBtn');
-              },
+              userBtn: _userBtn,
             ),
             _divider(),
             Expanded(
@@ -120,6 +111,17 @@ class _ShanghuPageState extends State<ShanghuPage>  with AutomaticKeepAliveClien
     );
   }
 
+  _btnItemFun(data){
+    print(data);
+    Navigator.of(context).pushReplacement( // pushReplacement 指把当前页面在栈中的位置替换成跳转的页面
+        MaterialPageRoute(builder: (_) {
+          return MerchantDetail(
+            merchant: Merchant.fromJson(data),
+          );
+        })
+    );
+  }
+
   _searchFun(data) async{
     Completer completer = Completer();
     try{
@@ -131,6 +133,12 @@ class _ShanghuPageState extends State<ShanghuPage>  with AutomaticKeepAliveClien
       completer.completeError(err);
     }
     return completer.future;
+  }
+
+  _userBtn(){
+
+
+
   }
 
   Future _refresh() async{

@@ -50,7 +50,6 @@ class _MerchantEditedState extends State<MerchantEdited> {
   String brandName;  // 品牌名称
   bool accountStatues;   // 是否启用
   List ktvList;  // 商户门店列表
-  var backResult;  // 返回值
 
   Map<String, dynamic> fromData = {
     'name': null,
@@ -234,19 +233,17 @@ class _MerchantEditedState extends State<MerchantEdited> {
           ),
         ),
       ),
-      onTap: () async{
-        var backResult = await Navigator.of(context).push(
+      onTap: (){
+        Navigator.of(context).push(
             MaterialPageRoute(builder: (context) {
               return Search(
                 pageTitle: '选择门店',
                 placeholder: '请输入门店信息',
                 searchFun: _searchFun,
+                btnItemFun: _btnItemFun,
               );
             })
         );
-        if(null != backResult){
-          _addKtv(KTV.fromJson(backResult));
-        }
       },
     );
   }
@@ -273,10 +270,11 @@ class _MerchantEditedState extends State<MerchantEdited> {
           color: Colors.white,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
                 alignment: Alignment.center,
-                margin: EdgeInsets.only(right: 6, top: 4),
+                margin: EdgeInsets.only(right: 6,),
                 width: ScreenUtil().setWidth(14),
                 height: ScreenUtil().setHeight(14),
                 decoration: BoxDecoration(
@@ -325,7 +323,7 @@ class _MerchantEditedState extends State<MerchantEdited> {
         borderRadius: BorderRadius.circular(4),
       ),
       child: FlatButton(
-        padding: EdgeInsets.only(top: 10, bottom: 10),
+        padding: EdgeInsets.only(top: 16, bottom: 16),
         child: Text("保存", style: TextStyle(
           color: Colors.white,
           fontSize: ScreenUtil().setSp(16)
@@ -333,6 +331,12 @@ class _MerchantEditedState extends State<MerchantEdited> {
         onPressed: _fromBtn,
       ),
     );
+  }
+
+  _btnItemFun(data){
+
+    Navigator.of(context).pop();
+    _addKtv(KTV.fromJson(data));
   }
 
   _addKtv(KTV ktv){
@@ -419,7 +423,7 @@ class _MerchantEditedState extends State<MerchantEdited> {
         }
       }catch(err){
         print(err);
-        Toast.show('修改失败', context, duration: 2, gravity: 1);
+//        Toast.show('修改失败', context, duration: 2, gravity: 1);
       }
     }
   }

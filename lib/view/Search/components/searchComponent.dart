@@ -59,6 +59,7 @@ class _SearchWidgetState extends State<SearchWidget> {
                 focusNode: _commentFocus,
                 onChanged: _onChanged,
                 cursorWidth: 1,
+                autofocus: true,
                 cursorColor: Colors.black,
                 style: TextStyle(
                   fontSize: ScreenUtil().setSp(12),

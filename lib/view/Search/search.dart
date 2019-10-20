@@ -11,12 +11,14 @@ class Search extends StatefulWidget {
   final String pageTitle;
   final String placeholder;
   final Function searchFun;
+  final Function btnItemFun;
 
   Search({
     Key key,
     this.pageTitle,
     this.placeholder,
-    this.searchFun
+    this.searchFun,
+    this.btnItemFun
   }): super(key: key);
   @override
   _SearchState createState() => _SearchState();
@@ -106,8 +108,9 @@ class _SearchState extends State<Search> {
               ),
             ),
             onPressed: (){
-              print(item);
-              Navigator.of(context).pop(item);
+
+              widget.btnItemFun(item);
+
             },
           ),
           Divider(
