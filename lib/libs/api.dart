@@ -27,7 +27,6 @@ class HttpRequest {
 
   InterceptorsWrapper _wrapper(BuildContext context){
     return InterceptorsWrapper(onRequest: (RequestOptions options) async{
-      print("++++++${options.data}++++++++++");
       var token = await Utils.getToken();
       if(token != null){
         options.headers['Authorization'] = 'Bearer ' + token;

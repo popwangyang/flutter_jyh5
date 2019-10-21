@@ -6,6 +6,7 @@ import 'router/router.dart';
 import 'view/login.dart';
 import 'common/theme.dart';
 
+import 'view/initPage.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
           theme: appTheme,  // app主题
           //注册路由表
           routes: routes,
-          home: new LoginPage(),
+          home: new InitPage(),
       ),
     );
   }

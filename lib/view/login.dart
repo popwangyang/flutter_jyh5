@@ -194,14 +194,17 @@ class _LoginPageState extends State<LoginPage> {
       height: ScreenUtil.getInstance().setHeight(56),
       child: Column(
         children: <Widget>[
-          Container(
-            width: ScreenUtil.getInstance().setWidth(96),
-            height: ScreenUtil.getInstance().setHeight(28),
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage('lib/assets/image/loginLogo.png'),
-                    fit: BoxFit.fitWidth
-                )
+          Hero(
+            tag: "logo",
+            child:  Container(
+              width: ScreenUtil.getInstance().setWidth(96),
+              height: ScreenUtil.getInstance().setHeight(28),
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage('lib/assets/image/loginLogo.png'),
+                      fit: BoxFit.fitWidth
+                  )
+              ),
             ),
           ),
           Container(

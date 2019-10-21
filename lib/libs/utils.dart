@@ -46,6 +46,43 @@ class Utils{
     return completer.future;
   }
 
+  static Future getLocalData(String key) async{
+    Completer completer = new Completer();
+    try{
+      SharedPreferences prefs = await _prefs;
+      print('getLocalData');
+      completer.complete(prefs.getString(key));
+    }catch(err){
+      completer.completeError(err);
+    }
+    return completer.future;
+  }
+
+  static Future setLocalData(String key, String value) async{
+    Completer completer = new Completer();
+    try{
+      SharedPreferences prefs = await _prefs;
+      print('setLocalData');
+      completer.complete(prefs.setString(key, value));
+    }catch(err){
+      completer.completeError(err);
+    }
+    return completer.future;
+  }
+
+  static Future removeLocalData(String key) async{
+    Completer completer = new Completer();
+    try{
+      SharedPreferences prefs = await _prefs;
+      print('removeLocalData');
+      prefs.remove(key);
+      completer.complete();
+    }catch(err){
+      completer.completeError(err);
+    }
+    return completer.future;
+  }
+
   static String getRandomNumber(){
     String alphabet = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
     int strLength = 30;
