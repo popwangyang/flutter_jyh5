@@ -7,6 +7,8 @@ import '../common/components/Input.dart';
 import '../common/components/Button.dart';
 import '../common/ValueNotifier.dart';
 import '../model/validate/rule.dart';
+import 'dart:convert';
+import 'package:jy_h5/model/user.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -20,6 +22,8 @@ class _LoginPageState extends State<LoginPage> {
   ValueNotifierData vn = ValueNotifierData('');
   bool loading = false;
   Login login;
+  TextEditingController usernameController;
+  TextEditingController passwordController;
 
 
   @override
@@ -130,8 +134,19 @@ class _LoginPageState extends State<LoginPage> {
           fontSize: ScreenUtil.getInstance().setSp(16),
           fontWeight: FontWeight.w500,
         ),),
-        InputForm(onChange: inputUserChange, placeholder: '请输入邮箱', vn: vn,),
-        InputForm(onChange: inputPassWordChange, placeholder: '请输入密码', inputType: 'password', vn: vn,),
+        InputForm(
+          controller: usernameController,
+          onChange: inputUserChange,
+          placeholder: '请输入邮箱',
+          vn: vn,
+        ),
+        InputForm(
+          controller: passwordController,
+          onChange: inputPassWordChange,
+          placeholder: '请输入密码',
+          inputType: 'password',
+          vn: vn,
+        ),
         Container(
           margin: EdgeInsets.only(top: ScreenUtil.getInstance().setHeight(20)),
           child: _loginBtn(),
@@ -229,8 +244,8 @@ class _LoginPageState extends State<LoginPage> {
 
 
   Map fromData = {
-    'username': 'admin@hlchang.cn',
-    'password': 'abc12345'
+    'username': '',
+    'password': ''
   };
 
   Map rule = {
@@ -241,6 +256,28 @@ class _LoginPageState extends State<LoginPage> {
       Rule(require: true, message: '请输入密码')
     ],
   };
+
+  @override
+  void initState() {
+    usernameController = TextEditingController();
+    passwordController = TextEditingController();
+    initInfo();
+    super.initState();
+  }
+
+  void initInfo() async{
+    var data = await Utils.getLocalData('user');
+
+    if(data != null){
+    var user = User.fromJson(json.decode(data));
+    print(user.username);
+    setState(() {
+      usernameController.text = user.username;
+      passwordController.text = user.password;
+    });
+
+    }
+  }
 
 
   void inputUserChange(val){

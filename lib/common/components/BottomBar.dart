@@ -96,8 +96,13 @@ class _BottomBarState extends State<BottomBar> {
                   Positioned(
                     left: MediaQuery.of(context).size.width/2 - 20,
                     top: 0,
-                    child: Container(
-                      child: AddIcon(),
+                    child: InkWell(
+                      child: Container(
+                        child: AddIcon(),
+                      ),
+                      onTap: (){
+                        _btn(2);
+                      },
                     ),
                   ),
                 ],

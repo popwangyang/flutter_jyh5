@@ -27,7 +27,7 @@ dependencies:
   flutter_easyrefresh: ^2.0.4
   flutter_swiper: ^1.1.6
   flutter_screenutil: ^0.5.3
-  url_launcher: ^5.0.1
+  url_launcher: ^5.2.3
   provider: ^3.1.0
   shared_preferences: ^0.4.3
   toast: ^0.1.5

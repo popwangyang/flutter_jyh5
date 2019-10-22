@@ -9,6 +9,7 @@ import '../../common/components/ListView.dart';
 import 'package:jy_h5/common/components/loading.dart';
 import 'package:jy_h5/common/components/Error.dart';
 import '../../model/ktv.dart';
+import 'components/ktvDetail/ktvDetail.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 
@@ -198,7 +199,11 @@ class ItemWidget extends StatelessWidget {
         ),),
         trailing: Icon(Icons.arrow_forward_ios, size: ScreenUtil.getInstance().setSp(16), color: Color.fromRGBO(153, 153, 153, 1),),
         onTap: (){
-          print("丁阿基");
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (_){
+                  return KtvDetail(ktv: ktv,);
+                })
+          );
         },
         subtitle:  _subtitle(),
       ),

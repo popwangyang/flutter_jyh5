@@ -116,7 +116,8 @@ class _ListSelectedState extends State<ListSelected>{
               context,
               child: pick,
               height: 300,
-              onSelected: _onSelected
+              onSelected: _onSelected,
+              isShowTitle: true
             );
           },
         ),

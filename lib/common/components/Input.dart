@@ -10,13 +10,15 @@ class InputForm extends StatefulWidget {
     this.onChange,
     this.inputType = 'text',
     this.placeholder = '请输入',
-    this.vn
+    this.vn,
+    this.controller
   }):super(key: key);
   final String inputValue;
   final ValueChanged onChange;
   final String inputType;
   final String placeholder;
   final ValueNotifierData vn;
+  final TextEditingController controller;
 
 
   @override
@@ -25,7 +27,7 @@ class InputForm extends StatefulWidget {
 
 class _InputFormState extends State<InputForm> {
 
-  TextEditingController _unameController = TextEditingController();
+  TextEditingController _unameController;
 
   FocusNode _commentFocus = FocusNode();  // 焦点句柄
 
@@ -101,7 +103,7 @@ class _InputFormState extends State<InputForm> {
 
   @override
   void initState() {
-
+    _unameController = widget.controller;
     _unameController.addListener((){
       _showCancle = _unameController.text == '' ? false : true;
       _inputChange(_unameController.text);

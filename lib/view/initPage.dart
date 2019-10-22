@@ -47,7 +47,7 @@ class _InitPageState extends State<InitPage> with TickerProviderStateMixin{
     Login _login = Provider.of<Login>(context);
     await _login.initUser();
 
-    if(_login.user == null){
+    if(_login.user == null || !_login.user.autoLogin){
       Navigator.of(context).push(
           MaterialPageRoute(builder: (_) {
             return LoginPage();

@@ -147,8 +147,8 @@ class _MerchantEditedState extends State<MerchantEdited> {
                 title: '密码',
                 placeholder: '请输入密码',
                 value: fromData['password'],
-                isRequired: false,
                 onChange: (e){
+                  print(e);
                   fromData['password'] = e;
                 },
               );
@@ -377,12 +377,22 @@ class _MerchantEditedState extends State<MerchantEdited> {
 
   @override
   void initState() {
-    fromData['name'] = widget.merchantDetailModel.name;
-    fromData['phone'] = widget.merchantDetailModel.phone;
-    fromData['email'] = widget.merchantDetailModel.email;
-    fromData['brandName'] = widget.merchantDetailModel.brandName;
-    fromData['isUsed'] = widget.merchantDetailModel.accountStatues;
-    fromData['ktvList'].addAll(widget.merchantDetailModel.ktvList);
+    if(!widget.isEdited){
+      fromData['name'] = '';
+      fromData['phone'] = '';
+      fromData['email'] = '';
+      fromData['brandName'] = '';
+      fromData['isUsed'] = true;
+      fromData['ktvList'] = [];
+    }else{
+      fromData['name'] = widget.merchantDetailModel.name;
+      fromData['phone'] = widget.merchantDetailModel.phone;
+      fromData['email'] = widget.merchantDetailModel.email;
+      fromData['brandName'] = widget.merchantDetailModel.brandName;
+      fromData['isUsed'] = widget.merchantDetailModel.accountStatues;
+      fromData['ktvList'].addAll(widget.merchantDetailModel.ktvList);
+    }
+
     super.initState();
   }
 
@@ -390,12 +400,11 @@ class _MerchantEditedState extends State<MerchantEdited> {
     print(fromData);
     if(widget.isEdited){
       rule.remove('password');
-      fromData.remove('password');
     }
     bool validateState = Utils.validate(fromData, rule, context);
     print(validateState);
     if(validateState){
-      var id = widget.merchantDetailModel.id;
+
 
       var brand = loginData.companyBrands.firstWhere((item){
          return item.name == fromData['brandName'];
@@ -407,19 +416,25 @@ class _MerchantEditedState extends State<MerchantEdited> {
         'email': fromData['email'],
         'phone': fromData['phone'],
         'ktv': ktvID,
-        'status': fromData['accountStatues']
+        'status': fromData['accountStatues'],
+        'password': fromData['password']
       };
       try{
         if(widget.isEdited){
+          sendData.remove('password');
+          var id = widget.merchantDetailModel.id;
           await putMerchantDetail(id, sendData, context);
           Toast.show('修改成功', context, duration: 2, gravity: 1);
           Future.delayed(Duration(seconds: 1),(){
             Navigator.of(context).pushNamed('indexPage');
           });
         }else{
-          sendData['password'] = fromData['passwrod'];
+          print(sendData);
           await createMerchantDetail(sendData, context);
           Toast.show('创建成功', context, duration: 2, gravity: 1);
+          Future.delayed(Duration(seconds: 1),(){
+            Navigator.of(context).pushNamed('indexPage');
+          });
         }
       }catch(err){
         print(err);

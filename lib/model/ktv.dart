@@ -94,7 +94,7 @@ class KtvDetailModel {
   String openingHours;
   String businessHours;
   int businessState;
-  double balance;
+  dynamic balance;
   String serialNumber;
   String provinceCode;
   String cityCode;

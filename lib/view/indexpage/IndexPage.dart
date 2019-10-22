@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../../common/components/BottomBar.dart';
 import '../shanghu/index.dart';
 import '../KTVPage/ktvPage.dart';
+import 'components/add.dart';
+import 'package:provider/provider.dart';
+import 'package:jy_h5/store/model/loginModel.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -19,6 +22,8 @@ class _IndexPageState extends State<IndexPage> {
 
   @override
   Widget build(BuildContext context) {
+    Login login = Provider.of<Login>(context);
+    login.getLoginInfo(context);
     return Scaffold(
      body: BottomBar(
        page: IndexedStack(
@@ -28,11 +33,23 @@ class _IndexPageState extends State<IndexPage> {
        index: _index,
        onChange: (index){
          print(index);
-         _index = index;
-         setState(() {});
+         if(index != 2){
+           _index = index;
+           setState(() {});
+         }else{
+           Add.foo(context);
+         }
+
        },
      )
     );
+  }
+
+  @override
+  void initState() {
+//    Login login = Provider.of<Login>(context);
+//    login.getLoginInfo(context);
+    super.initState();
   }
   
 }

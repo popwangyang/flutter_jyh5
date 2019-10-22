@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jy_h5/view/indexpage/components/user.dart';
 
 class Search extends StatelessWidget {
 
@@ -52,7 +53,9 @@ class Search extends StatelessWidget {
               ),
               child: Image.asset('lib/assets/image/indexUS.png', width: 16, height: 16,fit: BoxFit.contain,),
             ),
-            onTap: userBtn,
+            onTap: (){
+              User.foo(context);
+            },
             highlightColor: Colors.blue
           )
         ],
