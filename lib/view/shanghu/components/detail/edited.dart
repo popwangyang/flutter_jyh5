@@ -20,6 +20,7 @@ import 'package:jy_h5/view/Search/search.dart';
 import 'package:jy_h5/api/ktv.api.dart';
 import 'package:jy_h5/model/ktv.dart';
 import 'package:toast/toast.dart';
+import 'package:jy_h5/common/components/Strip.dart';
 
 
 
@@ -165,12 +166,8 @@ class _MerchantEditedState extends State<MerchantEdited> {
               initValue: fromData['brandName']
           ),
           _switch(),
-          Container(
-            height: ScreenUtil().setHeight(40),
-            width: ScreenUtil().width,
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(left: 16),
-            child: Text("关联场所：${fromData['ktvList'].length}", style: Style.navTitle()),
+          Strip(
+            title: "关联场所：${fromData['ktvList'].length}",
           ),
           _selectBtnWidget(),
           _showPlaceListWidget(),
@@ -182,7 +179,7 @@ class _MerchantEditedState extends State<MerchantEdited> {
 
   Widget _switch(){
     return Container(
-      padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
+      padding: EdgeInsets.fromLTRB(10, 4, 10, 4),
       color: Colors.white,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -274,7 +271,7 @@ class _MerchantEditedState extends State<MerchantEdited> {
             children: <Widget>[
               Container(
                 alignment: Alignment.center,
-                margin: EdgeInsets.only(right: 6,),
+                margin: EdgeInsets.only(right: 6, top: 5),
                 width: ScreenUtil().setWidth(14),
                 height: ScreenUtil().setHeight(14),
                 decoration: BoxDecoration(
@@ -317,13 +314,13 @@ class _MerchantEditedState extends State<MerchantEdited> {
   Widget _btnClickWidget(){
     return Container(
       width: ScreenUtil().width,
-      margin: EdgeInsets.fromLTRB(16, 30, 16, 30),
+      margin: EdgeInsets.fromLTRB(16, 26, 16, 26),
       decoration: BoxDecoration(
         gradient: LinearGradient(colors:[Color.fromRGBO(61, 158, 255, 1),Color.fromRGBO(24, 82, 243, 1)]),
         borderRadius: BorderRadius.circular(4),
       ),
       child: FlatButton(
-        padding: EdgeInsets.only(top: 16, bottom: 16),
+        padding: EdgeInsets.only(top: 12, bottom: 12),
         child: Text("保存", style: TextStyle(
           color: Colors.white,
           fontSize: ScreenUtil().setSp(16)

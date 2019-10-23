@@ -40,7 +40,7 @@ class _ListInputState extends State<ListInput> {
       children: <Widget>[
         Container(
           color: Colors.white,
-          padding: EdgeInsets.fromLTRB(16, 14, 16, 14),
+          padding: EdgeInsets.fromLTRB(10, 14, 10, 14),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,

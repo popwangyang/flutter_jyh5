@@ -5,6 +5,7 @@ import 'package:jy_h5/common/components/Appbar.dart';
 import 'package:jy_h5/common/components/PageContent.dart';
 import '../widgets.dart';
 import 'package:jy_h5/common/components/ListItem.dart';
+import 'package:jy_h5/view/KTVPage/components/ktvEdite/ktvEdite.dart';
 
 // 工具类
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,6 +13,7 @@ import 'package:jy_h5/common/style.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:jy_h5/api/ktv.api.dart';
 import 'package:jy_h5/model/ktv.dart';
+import 'package:jy_h5/libs/utils.dart';
 import 'dart:convert';
 
 
@@ -50,6 +52,7 @@ class _KtvDetailState extends State<KtvDetail> {
       'title': '线下充值'
     },
   ];
+
   KtvDetailModel ktvDetailModel;
 
 
@@ -106,7 +109,7 @@ class _KtvDetailState extends State<KtvDetail> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  width: ScreenUtil().setWidth(250),
+                  width: ScreenUtil().setWidth(260),
                   child: Text(widget.ktv.name, style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: Color.fromRGBO(255, 255, 255, 1),
@@ -155,13 +158,18 @@ class _KtvDetailState extends State<KtvDetail> {
                 ),
                 ),
               ),
-              onPressed: () {}
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_){
+                  return KtvEdited();
+                }));
+              }
           )
         ],
       ),
     );
   }
 
+  // 页面内容
   Widget _content(){
 
     return Container(
@@ -182,7 +190,7 @@ class _KtvDetailState extends State<KtvDetail> {
           ),
           ListItem(
             title: '商户地址',
-            label: ktvDetailModel.address,
+            label: ktvDetailModel.detailAddress,
           ),
           InkWell(
             child: Container(
@@ -224,12 +232,12 @@ class _KtvDetailState extends State<KtvDetail> {
           ),
           ListItem1(
             title: '开业时间',
-            label: '2018年12月24日',
+            label: Utils.dateChang(ktvDetailModel.openingHours),
           ),
           ListItem1(
             isLast: true,
             title: '营业时间',
-            label: '10:30:21-11:45:10  星期一,星期二,星期三，星期一,星期二,星期三',
+            label: ktvDetailModel.businessHours.toString(),
           ),
           SizedBox(
             height: ScreenUtil().setHeight(10),
@@ -255,6 +263,8 @@ class _KtvDetailState extends State<KtvDetail> {
     );
   }
 
+
+  // 详情子项
   Widget _itemTabList(String imgUrl, String title){
 
     return Container(
@@ -286,6 +296,7 @@ class _KtvDetailState extends State<KtvDetail> {
     super.initState();
   }
 
+  // 打电话
   void _launchURL(String phone) async {
     String url = 'tel:'+phone;
     if (await canLaunch(url)) {

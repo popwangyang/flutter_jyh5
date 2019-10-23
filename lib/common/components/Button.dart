@@ -17,7 +17,7 @@ class _ButtonState extends State<Button> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: ScreenUtil.getInstance().setWidth(280),
+      width: ScreenUtil.getInstance().width,
       child: RaisedButton(
         textColor: Colors.white,
         highlightColor: Colors.lightBlueAccent,

@@ -32,6 +32,7 @@ dependencies:
   shared_preferences: ^0.4.3
   toast: ^0.1.5
   city_pickers: ^0.0.1
+  flutter_cupertino_date_picker: ^1.0.12
 
 
 

@@ -149,6 +149,10 @@ class _LoginPageState extends State<LoginPage> {
         ),
         Container(
           margin: EdgeInsets.only(top: ScreenUtil.getInstance().setHeight(20)),
+          padding: EdgeInsets.only(
+            left: ScreenUtil().setWidth(20),
+            right: ScreenUtil().setWidth(20)
+          ),
           child: _loginBtn(),
         ),
         Container(

@@ -20,7 +20,7 @@ class KtvPage extends StatefulWidget {
 
 class _KtvPageState extends State<KtvPage>  with AutomaticKeepAliveClientMixin  {
 
-  List dataList;
+  List dataList = [];
   int total;
   int page = 1;
   int pageSize = 20;

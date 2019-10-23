@@ -122,7 +122,45 @@ class Utils{
 
   }
 
+  // 将2019-8-9的时间格式转为2019年8月9日
+  static String dateChang(String date){
 
+    List<String> arr = date.split('-');
 
+    return "${arr[0]}年${arr[1]}月${arr[2]}日";
+
+  }
+
+  // 将数组的每一天转换为星期天对应的日期
+
+  static String weekChang(int number){
+
+    var result;
+    switch(number){
+      case 1:
+        result = "星期一";
+        break;
+      case 2:
+        result = '星期二';
+        break;
+      case 3:
+        result = '星期三';
+        break;
+      case 4:
+        result = '星期四';
+        break;
+      case 5:
+        result = '星期五';
+        break;
+      case 6:
+        result = '星期六';
+        break;
+      case 7:
+        result = '星期日';
+        break;
+    }
+
+    return result;
+  }
 
 }

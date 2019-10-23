@@ -6,6 +6,7 @@ import 'package:jy_h5/common/components/ListItem.dart';
 import 'package:jy_h5/api/merchant.api.dart';
 import 'package:jy_h5/common/components/PageContent.dart';
 import 'package:jy_h5/common/style.dart';
+import 'package:jy_h5/common/components/Strip.dart';
 import 'edited.dart';
 import 'dart:convert';
 
@@ -39,8 +40,8 @@ class _MerchantDetailState extends State<MerchantDetail> {
               child: Container(
                 color: Color.fromRGBO(246, 246, 246, 1),
                 padding: EdgeInsets.only(
-                    left: ScreenUtil().setWidth(15),
-                    right: ScreenUtil().setWidth(15),
+                    left: ScreenUtil().setWidth(10),
+                    right: ScreenUtil().setWidth(10),
                     top: ScreenUtil().setHeight(10),
                     bottom: ScreenUtil().setHeight(10)
                 ),
@@ -155,11 +156,8 @@ class _MerchantDetailState extends State<MerchantDetail> {
             label: '${merchantDetailModel.createDate}',
             isLast: true,
           ),
-          Container(
-            height: ScreenUtil().setHeight(40),
-            width: ScreenUtil().width,
-            alignment: Alignment.centerLeft,
-            child: Text("关联场所：${merchantDetailModel.ktvList.length}", style: Style.navTitle()),
+          Strip(
+            title: "关联场所：${merchantDetailModel.ktvList.length}",
           ),
           Container(
             child: Column(

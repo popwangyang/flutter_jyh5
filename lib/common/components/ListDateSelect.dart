@@ -1,42 +1,47 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:jy_h5/common/components/ListPicker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import '../style.dart';
 
-class ListSelected extends StatefulWidget {
-  final bool isRequired;
-  final List data;
-  final ValueChanged onChange;
-  final String initValue;
-  final bool isLast;
-  final String title;
-  final Function btn;
+enum DateType {
 
-  ListSelected({
-    Key key,
-    this.isRequired = true,
-    this.data,
-    this.onChange,
-    this.initValue,
-    this.title,
-    this.isLast = false,
-    this.btn
-  }):super(key: key);
+  DATE,
 
-  @override
-  _ListSelectedState createState() => _ListSelectedState();
+  TIME,
+
 }
 
-class _ListSelectedState extends State<ListSelected>{
+class DateSelect extends StatefulWidget {
 
-  double customerItemExtent = 40;
-  String _value;
-  int _position;
+  final bool isLast;
+  final String title;
+  final bool isRequired;
+  final DateTime initValue;
+  final Function onChang;
+  final DateType type;
 
-  FixedExtentScrollController scrollController;
 
-  var pick;
+
+  DateSelect({
+    Key key,
+    this.isLast = false,
+    this.title,
+    this.isRequired = true,
+    this.initValue,
+    this.type = DateType.DATE,
+    @required this.onChang
+  }): super(key: key);
+
+  @override
+  _DateSelectState createState() => _DateSelectState();
+}
+
+class _DateSelectState extends State<DateSelect> {
+
+  DateTime _value;
+  String _dateFormat;
+  DateTimePickerMode  _datePickerMode;
+
 
 
   @override
@@ -53,7 +58,7 @@ class _ListSelectedState extends State<ListSelected>{
               children: <Widget>[
                 Expanded(
                   flex: 2,
-                  child: Text.rich(TextSpan(
+                  child:  Text.rich(TextSpan(
                       children: [
                         TextSpan(
                             text: widget.title,
@@ -71,13 +76,15 @@ class _ListSelectedState extends State<ListSelected>{
                         }()
                       ]
                   )),
-
                 ),
                 Expanded(
                   flex: 4,
                   child: (){
                     if(_value != null){
-                      return Text(_value, style: Style.inputText(),);
+                      return Text(
+                       foo(_value),
+                        style: Style.inputText(),
+                      );
                     }else{
                       return Text('请选择', style: Style.placeHolder());
                     }
@@ -91,40 +98,19 @@ class _ListSelectedState extends State<ListSelected>{
             ),
           ),
           onTap: (){
-            if(widget.btn == null){
-              _position = widget.data.indexOf(_value) == -1 ?
-              0:widget.data.indexOf(_value);
-              print(_position);
-              scrollController = FixedExtentScrollController(
-                  initialItem: _position
-              );
-              pick = CupertinoPicker.builder(
-                  itemExtent: 40,
-                  scrollController: scrollController,
-                  backgroundColor: Colors.transparent,
-                  onSelectedItemChanged: (position){
-                    print("========$position==========");
-                    _position = position;
-                  },
-                  childCount: widget.data.length,
-                  itemBuilder: (context, val){
-                    return Center(
-                      child: Text(
-                        widget.data[val],
-                        style: Style.pickListText(),
-                      ),
-                    );
-                  });
-              ListPicker.pickerList(
+              DatePicker.showDatePicker(
                   context,
-                  child: pick,
-                  height: 260,
-                  onSelected: _onSelected,
-                  isShowTitle: true
+                  initialDateTime: _value == null ? DateTime.now().add(Duration(hours: 8)):_value,
+                  dateFormat: _dateFormat,
+                  locale: DateTimePickerLocale.zh_cn,
+                  pickerMode: _datePickerMode,
+                  onConfirm: (date, index){
+                    setState(() {
+                      _value = date;
+                      widget.onChang(foo(date));
+                    });
+                  }
               );
-            }else{
-              widget.btn();
-            }
           },
         ),
         Opacity(
@@ -139,21 +125,20 @@ class _ListSelectedState extends State<ListSelected>{
     );
   }
 
-
-  _onSelected(){
-    print(_position);
-    setState(() {
-      _value = widget.data[_position];
-    });
-    widget.onChange(_position);
-  }
-
   @override
   void initState() {
     _value = widget.initValue;
+    _dateFormat = widget.type == DateType.DATE ? 'yyyy年-MMMM月-dd日':'H时-m分-s秒';
+    _datePickerMode = widget.type == DateType.DATE ? DateTimePickerMode.date: DateTimePickerMode.time;
     super.initState();
   }
 
+  String foo(DateTime date){
+    String result = widget.type == DateType.DATE ?
+    _value.toString().substring(0, 10):
+    _value.toString().substring(10, 19);
+    return result;
+  }
+
+
 }
-
-

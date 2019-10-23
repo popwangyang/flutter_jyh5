@@ -1,4 +1,5 @@
-import 'dart:convert';
+import 'dart:convert' as util;
+import 'package:jy_h5/libs/utils.dart';
 
 class KtvList {
   List<KTV> data;
@@ -17,28 +18,12 @@ class KTV {
   int type;
   String name;
   String merchant_name;
-  String place_contact;
-  String phone_number;
-  String province_code;
-  String city_code;
-  String county_code;
-  String address;
-  String opening_hours;
-  BusinessHours businessHours;
 
   KTV({
     this.id,
-    this.address,
     this.name,
     this.merchant_name,
-    this.city_code,
-    this.county_code,
-    this.opening_hours,
-    this.phone_number,
-    this.place_contact,
-    this.province_code,
     this.type,
-    this.businessHours
   });
   
   factory KTV.fromJson(dynamic data){
@@ -46,18 +31,124 @@ class KTV {
       id: data['id'],
       name: data['name'],
       merchant_name: data['merchant_name'],
-      address: data['address'],
-      province_code: data['province_code'],
-      city_code: data['city_code'],
-      county_code: data['county_code'],
-      opening_hours: data['opening_hours'],
-      phone_number: data['phone_number'],
-      type: data['type'],
-      place_contact: data['place_contact'],
-      businessHours: BusinessHours.fromJson(json.decode(data['business_hours']))
     );
   }
 
+}
+
+
+
+class KtvDetailModel {
+  int id;  // ktv id
+  String name;  // ktv 名称
+  int type;  // ktv 类型（量贩， 夜店）
+  String contact; // ktv 管理人员
+  String placeContact; // ktv 场所电话
+  String phoneNumber;  // ktv 管理人员电话
+  String province;
+  String city;
+  String county;
+  String address;
+  String openingHours;
+  BusinessHours businessHours;
+  int businessState;
+  String balance;  // 账户余额
+  String serialNumber;
+  String provinceCode;
+  String cityCode;
+  String countyCode;
+  int accountStatus;
+  Null chargeableTime;
+  String merchantName;
+  int implementState;
+  int owenBoxCount;
+  int implementBoxCount;
+  String detailAddress;
+
+  KtvDetailModel(
+      {this.id,
+        this.name,
+        this.type,
+        this.contact,
+        this.placeContact,
+        this.phoneNumber,
+        this.province,
+        this.city,
+        this.county,
+        this.address,
+        this.openingHours,
+        this.businessHours,
+        this.businessState,
+        this.balance,
+        this.serialNumber,
+        this.provinceCode,
+        this.cityCode,
+        this.countyCode,
+        this.accountStatus,
+        this.chargeableTime,
+        this.merchantName,
+        this.implementState,
+        this.owenBoxCount,
+        this.detailAddress,
+        this.implementBoxCount});
+
+  KtvDetailModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    type = json['type'];
+    contact = json['contact'];
+    placeContact = json['place_contact'];
+    phoneNumber = json['phone_number'];
+    province = json['province'];
+    city = json['city'];
+    county = json['county'];
+    address = json['address'];
+    openingHours = json['opening_hours'];
+    businessHours = BusinessHours.fromJson(util.json.decode(json['business_hours']));
+    businessState = json['business_state'];
+    balance = json['balance'];
+    serialNumber = json['serial_number'];
+    provinceCode = json['province_code'];
+    cityCode = json['city_code'];
+    countyCode = json['county_code'];
+    accountStatus = json['account_status'];
+    chargeableTime = json['chargeable_time'];
+    merchantName = json['merchant_name'];
+    implementState = json['implement_state'];
+    owenBoxCount = json['owen_box_count'];
+    implementBoxCount = json['implement_box_count'];
+    detailAddress = "${json['province']},${json['city']},${json['county']},${json['address']}";
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['type'] = this.type;
+    data['contact'] = this.contact;
+    data['place_contact'] = this.placeContact;
+    data['phone_number'] = this.phoneNumber;
+    data['province'] = this.province;
+    data['city'] = this.city;
+    data['county'] = this.county;
+    data['address'] = this.address;
+    data['opening_hours'] = this.openingHours;
+    data['business_hours'] = this.businessHours;
+    data['business_state'] = this.businessState;
+    data['balance'] = this.balance;
+    data['serial_number'] = this.serialNumber;
+    data['province_code'] = this.provinceCode;
+    data['city_code'] = this.cityCode;
+    data['county_code'] = this.countyCode;
+    data['account_status'] = this.accountStatus;
+    data['chargeable_time'] = this.chargeableTime;
+    data['merchant_name'] = this.merchantName;
+    data['implement_state'] = this.implementState;
+    data['owen_box_count'] = this.owenBoxCount;
+    data['implement_box_count'] = this.implementBoxCount;
+    data['detailAddress'] = this.detailAddress;
+    return data;
+  }
 }
 
 class BusinessHours {
@@ -72,106 +163,29 @@ class BusinessHours {
     this.flag,
     this.start,
   });
-  
+
   factory BusinessHours.fromJson(dynamic json){
     return BusinessHours(
-      flag: json['flag'].toString(),
-      days: json['days'],
-      start: json['start'],
-      end: json['end']
+        flag: json['flag'].toString(),
+        days: json['days'],
+        start: json['start'],
+        end: json['end']
     );
   }
-}
 
-class KtvDetailModel {
-  int id;
-  String name;
-  int type;
-  String contact;
-  String placeContact;
-  String phoneNumber;
-  String address;
-  String openingHours;
-  String businessHours;
-  int businessState;
-  dynamic balance;
-  String serialNumber;
-  String provinceCode;
-  String cityCode;
-  String countyCode;
-  int accountStatus;
-  String chargeableTime;
-  int merchant;
-  int owenBoxCount;
-  int implementBoxCount;
-
-  KtvDetailModel(
-      {this.id,
-        this.name,
-        this.type,
-        this.contact,
-        this.placeContact,
-        this.phoneNumber,
-        this.address,
-        this.openingHours,
-        this.businessHours,
-        this.businessState,
-        this.balance,
-        this.serialNumber,
-        this.provinceCode,
-        this.cityCode,
-        this.countyCode,
-        this.accountStatus,
-        this.chargeableTime,
-        this.merchant,
-        this.owenBoxCount,
-        this.implementBoxCount});
-
-  KtvDetailModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    type = json['type'];
-    contact = json['contact'];
-    placeContact = json['place_contact'];
-    phoneNumber = json['phone_number'];
-    address = json['address'];
-    openingHours = json['opening_hours'];
-    businessHours = json['business_hours'];
-    businessState = json['business_state'];
-    balance = json['balance'];
-    serialNumber = json['serial_number'];
-    provinceCode = json['province_code'];
-    cityCode = json['city_code'];
-    countyCode = json['county_code'];
-    accountStatus = json['account_status'];
-    chargeableTime = json['chargeable_time'];
-    merchant = json['merchant'];
-    owenBoxCount = json['owen_box_count'];
-    implementBoxCount = json['implement_box_count'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['type'] = this.type;
-    data['contact'] = this.contact;
-    data['place_contact'] = this.placeContact;
-    data['phone_number'] = this.phoneNumber;
-    data['address'] = this.address;
-    data['opening_hours'] = this.openingHours;
-    data['business_hours'] = this.businessHours;
-    data['business_state'] = this.businessState;
-    data['balance'] = this.balance;
-    data['serial_number'] = this.serialNumber;
-    data['province_code'] = this.provinceCode;
-    data['city_code'] = this.cityCode;
-    data['county_code'] = this.countyCode;
-    data['account_status'] = this.accountStatus;
-    data['chargeable_time'] = this.chargeableTime;
-    data['merchant'] = this.merchant;
-    data['owen_box_count'] = this.owenBoxCount;
-    data['implement_box_count'] = this.implementBoxCount;
-    return data;
+  @override
+  String toString(){
+    String result;
+    if(this.flag == '0'){
+      result = "全部时间段";
+    }else{
+      String days = '';
+      for(var i = 0; i < this.days.length; i++){
+        days += Utils.weekChang(this.days[i])+" , ";
+      }
+      days = days.substring(0, days.length -2);
+      result = "${this.start}~${this.end}  $days";
+    }
+    return result;
   }
 }
