@@ -71,16 +71,13 @@ class _KtvTimeState extends State<KtvTime> {
                     Radio(
                       value: 0,
                       groupValue: this.radio,
-                      onChanged: (e){},
+                      onChanged: (e){ move(0);},
                     ),
                     Text("全部时段", style: Style.listTitle(),)
                   ],
                 ),
                 onTap: (){
-                  pageController.animateToPage(0, duration: duration, curve: curve);
-                  setState(() {
-                    this.radio = 0;
-                  });
+                  move(0);
                 },
               ),
               SizedBox(
@@ -92,17 +89,14 @@ class _KtvTimeState extends State<KtvTime> {
                     Radio(
                       value: 1,
                       groupValue: this.radio,
-                      onChanged: (e){},
+                      onChanged: (e){  move(1);},
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     Text("部分时段", style: Style.listTitle())
                   ],
                 ),
                 onTap: (){
-                  pageController.animateToPage(1, duration: duration, curve: curve);
-                  setState(() {
-                    this.radio = 1;
-                  });
+                  move(1);
                 },
               ),
             ],
@@ -148,6 +142,13 @@ class _KtvTimeState extends State<KtvTime> {
         ],
       ),
     );
+  }
+
+  void move(int index){
+    pageController.animateToPage(index, duration: duration, curve: curve);
+    setState(() {
+      this.radio = index;
+    });
   }
 
 
