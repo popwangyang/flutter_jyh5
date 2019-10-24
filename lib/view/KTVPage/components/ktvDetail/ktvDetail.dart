@@ -160,7 +160,7 @@ class _KtvDetailState extends State<KtvDetail> {
               ),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (_){
-                  return KtvEdited();
+                  return KtvEdited(ktv: ktvDetailModel,);
                 }));
               }
           )

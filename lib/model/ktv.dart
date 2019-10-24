@@ -31,6 +31,7 @@ class KTV {
       id: data['id'],
       name: data['name'],
       merchant_name: data['merchant_name'],
+      type: data['type']
     );
   }
 
@@ -171,6 +172,15 @@ class BusinessHours {
         start: json['start'],
         end: json['end']
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['days'] = this.days;
+    data['end'] = this.end;
+    data['flag'] = this.flag;
+    data['start'] = this.start;
+    return data;
   }
 
   @override

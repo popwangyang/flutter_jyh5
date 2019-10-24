@@ -1,47 +1,29 @@
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
-import '../style.dart';
-import 'dart:math';
+import 'package:city_pickers/city_pickers.dart';
+import 'package:jy_h5/common/style.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-enum DateType {
+class CitySelected extends StatelessWidget {
 
-  DATE,
-
-  TIME,
-
-}
-
-class DatePick extends StatelessWidget {
-
-  final bool isLast;
   final String title;
-  final bool isRequired;
+  final String codeValue;
   final String value;
   final Function onChang;
-  final DateType type;
+  final bool isRequired;
+  final bool isLast;
 
-
-
-  DatePick({
+  CitySelected({
     Key key,
-    this.isLast = false,
-    this.title,
-    this.isRequired = true,
     this.value,
-    this.type = DateType.DATE,
-    @required this.onChang
-  }): super(key: key);
-
-  String dateFormat;
-  DateTimePickerMode  datePickerMode;
+    this.title,
+    this.onChang,
+    this.codeValue,
+    this.isRequired = true,
+    this.isLast = false,
+  }):super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    dateFormat = type == DateType.DATE ? 'yyyy年-MMMM月-dd日':'H时-m分-s秒';
-    datePickerMode = type == DateType.DATE ? DateTimePickerMode.date: DateTimePickerMode.time;
-
-
     return Column(
       children: <Widget>[
         InkWell(
@@ -93,17 +75,36 @@ class DatePick extends StatelessWidget {
               ],
             ),
           ),
-          onTap: (){
-            DatePicker.showDatePicker(
-                context,
-                initialDateTime: value == null ? DateTime.now().add(Duration(hours: 8)) : goo(value),
-                dateFormat: dateFormat,
-                locale: DateTimePickerLocale.zh_cn,
-                pickerMode: datePickerMode,
-                onConfirm: (date, index){
-                  onChang(foo(date));
-                }
+          onTap: () async{
+            Result result = await CityPickers.showCityPicker(
+              context: context,
+              locationCode: codeValue,
+              height: 260,
+              theme: Theme.of(context).copyWith(
+                  textTheme: TextTheme(
+                    body1: TextStyle(color: Color(0xFF888888), fontSize: 16.0),
+                  ),
+              ),
+              cancelWidget: Text(
+                  '取消',
+                  style: TextStyle(fontSize: ScreenUtil().setSp(14),color: Color(0xff999999)),
+              ),
+              confirmWidget: Text(
+                  '确定',
+                  style: TextStyle(fontSize: ScreenUtil().setSp(14),color: Colors.blue),
+              ),
+              itemExtent: ScreenUtil().setHeight(30),
+              itemBuilder:(value, list, index){
+                return Text(value, style: TextStyle(
+                  fontSize: ScreenUtil().setSp(16),
+                  color: Colors.black
+                ),);
+              }
             );
+            print(result);
+            if(result != null){
+              onChang(result);
+            }
           },
         ),
         Opacity(
@@ -118,26 +119,4 @@ class DatePick extends StatelessWidget {
     );
   }
 
-  String foo(DateTime date){
-    String result = type == DateType.DATE ?
-    date.toString().substring(0, 10):
-    date.toString().substring(10, 19);
-    return result;
-  }
-
-  DateTime goo(String str){
-    DateTime result;
-    if(type == DateType.DATE){
-      result = DateTime.parse(str);
-    }else{
-      List arr = str.split(':');
-      DateTime now = DateTime.now();
-      print(arr);
-      result = DateTime(now.year, now.month, now.day, int.parse(arr[0]), int.parse(arr[1]), int.parse(arr[2]));
-    }
-    return result;
-  }
-
-
 }
-

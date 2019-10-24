@@ -18,3 +18,12 @@ Future<Response> getKTVDetail(id, context){
       options: Options(method: 'get')
   );
 }
+
+Future<Response> putKTVDetail(id, data, context){
+  return ajax.request(
+      context,
+      '/copyright/ktv/ktv/$id',
+      data: data,
+      options: Options(method: 'put')
+  );
+}
