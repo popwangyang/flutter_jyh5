@@ -7,18 +7,19 @@ import 'Empty.dart';
 
 class PageContent extends StatelessWidget {
 
-  final int pageStatues;
-  final Function content;
-  final Function reload;
-
   PageContent({
     Key key,
     @required this.content,
     this.reload,
-    this.pageStatues = 1
+    this.pageStatues = 1,
+    this.emptyWidget,
+
   }):super(key: key);
 
-
+  final int pageStatues;
+  final Function content;
+  final Function reload;
+  final Widget emptyWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +41,13 @@ class PageContent extends StatelessWidget {
         );
       }else{
         return Center(
-          child: Empty(),
+          child: (){
+            if(emptyWidget != null){
+              return emptyWidget;
+            }else{
+              return Empty();
+            }
+          }(),
         );
       }
     }();

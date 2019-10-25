@@ -69,7 +69,11 @@ class _MerchantDetailState extends State<MerchantDetail> {
   //页面标体
   Widget _title(){
     return Container(
-      padding: EdgeInsets.only(left: ScreenUtil().setWidth(10), right: ScreenUtil().setWidth(10)),
+      height: ScreenUtil().setHeight(50),
+      padding: EdgeInsets.only(
+          left: ScreenUtil().setWidth(10),
+          right: ScreenUtil().setWidth(10)
+      ),
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage('lib/assets/image/detailtitleBG.png'),
@@ -90,14 +94,24 @@ class _MerchantDetailState extends State<MerchantDetail> {
             overflow: TextOverflow.ellipsis,
             ),
           ),
-          RaisedButton(
-            color: Color.fromRGBO(24, 82, 243, 1),
-            highlightColor: Color.fromRGBO(61, 158, 255, 1),
-            colorBrightness: Brightness.dark,
-            splashColor: Colors.grey,
-            shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0)),
-            child: Container(
+          InkWell(
+              child: Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors:[
+                          Color.fromRGBO(61, 158, 255, 1),
+                          Color.fromRGBO(24, 82, 243, 1)
+                        ]
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [ //阴影
+                      BoxShadow(
+                          color:Colors.black45,
+                          offset: Offset(1.0,1.0),
+                          blurRadius: 2.0
+                      )
+                    ]//背景渐变
+                ),
                 padding: EdgeInsets.only(
                     left: ScreenUtil().setWidth(12),
                     right: ScreenUtil().setWidth(12),
@@ -107,18 +121,18 @@ class _MerchantDetailState extends State<MerchantDetail> {
                     color: Colors.white,
                     fontWeight: FontWeight.w400,
                     fontSize: ScreenUtil().setSp(12)
-                  ),
                 ),
-            ),
-            onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) {
-                    return MerchantEdited(
-                      merchantDetailModel: merchantDetailModel,
-                    );
-                  })
-              );
-            }
+                ),
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) {
+                      return MerchantEdited(
+                        merchantDetailModel: merchantDetailModel,
+                      );
+                    })
+                );
+              }
           )
         ],
       ),

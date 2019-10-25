@@ -155,7 +155,7 @@ class _KtvTimeState extends State<KtvTime> {
     radio = int.parse(widget.businessHours.flag);
     fromData['start'] = widget.businessHours.start;
     fromData['end'] = widget.businessHours.end;
-    print(widget.businessHours.days);
+    print(widget.businessHours.start);
     for(var i = 0; i < widget.businessHours.days.length; i++){
       weekList[widget.businessHours.days[i]]['value'] = true;
     }
@@ -327,7 +327,7 @@ class _KtvTimeState extends State<KtvTime> {
   }
 
   _startBtn(date){
-    if(fromData['end'] != null){
+    if(fromData['end'] != null && fromData['end'] != ''){
       if(!_differ(date, fromData['end'])){
         Toast.show('请选择正确的区间范围', context, duration: 2, gravity: 1);
       }else{
@@ -343,7 +343,7 @@ class _KtvTimeState extends State<KtvTime> {
   }
 
   _endBtn(date){
-    if(fromData['start'] != null){
+    if(fromData['start'] != null && fromData['start'] != ''){
       if(!_differ(fromData['start'], date)){
         Toast.show('请选择正确的区间范围', context, duration: 2, gravity: 1);
       }else{

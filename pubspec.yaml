@@ -33,6 +33,7 @@ dependencies:
   toast: ^0.1.5
   city_pickers: ^0.1.27
   flutter_cupertino_date_picker: ^1.0.12
+  image_picker: ^0.6.1+8
 
 
 

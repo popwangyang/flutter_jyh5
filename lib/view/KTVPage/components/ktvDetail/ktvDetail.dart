@@ -16,6 +16,9 @@ import 'package:jy_h5/model/ktv.dart';
 import 'package:jy_h5/libs/utils.dart';
 import 'dart:convert';
 
+// 企业信息
+import 'components/enterpriseInfo/index.dart';
+
 
 class KtvDetail extends StatefulWidget {
 
@@ -33,23 +36,28 @@ class _KtvDetailState extends State<KtvDetail> {
   List tabList = [
     {
       'imgUrl': 'lib/assets/image/qiye.png',
-      'title': '企业信息'
+      'title': '企业信息',
+      'index': 0
     },
     {
       'imgUrl': 'lib/assets/image/shishi.png',
-      'title': '实施信息'
+      'title': '实施信息',
+      'index': 1
     },
     {
       'imgUrl': 'lib/assets/image/qianyue.png',
-      'title': '签约信息'
+      'title': '签约信息',
+      'index': 2
     },
     {
       'imgUrl': 'lib/assets/image/zhanghao.png',
-      'title': '账号信息'
+      'title': '账号信息',
+      'index': 3
     },
     {
       'imgUrl': 'lib/assets/image/xianxia.png',
-      'title': '线下充值'
+      'title': '线下充值',
+      'index': 4
     },
   ];
 
@@ -91,78 +99,82 @@ class _KtvDetailState extends State<KtvDetail> {
   Widget _title(){
     return Container(
       width: ScreenUtil().width,
-      height: ScreenUtil().setWidth(55),
-      padding: EdgeInsets.only(left: ScreenUtil().setWidth(10), right: ScreenUtil().setWidth(10)),
+      padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
           image: DecorationImage(
               image: AssetImage('lib/assets/image/ktvDetailTitle.png'),
               fit: BoxFit.fitWidth
           )
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  width: ScreenUtil().setWidth(260),
-                  child: Text(widget.ktv.name, style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Color.fromRGBO(255, 255, 255, 1),
-                      fontSize: ScreenUtil().setSp(16)
-                  ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                width: ScreenUtil().setWidth(260),
+                child: Text(widget.ktv.name, style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Color.fromRGBO(255, 255, 255, 1),
+                    fontSize: ScreenUtil().setSp(16)
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    (){
-                      if(widget.ktv.type == 1){
-                        return LF();
-                      }else{
-                        return YZH();
-                      }
-                    }(),
-                    Text(widget.ktv.merchant_name,style: TextStyle(
-                        color: Colors.white,
-                        fontSize: ScreenUtil().setSp(12)
-                    ))
-                  ],
-                )
-              ],
-            ),
-          ),
-          RaisedButton(
-              color: Color.fromRGBO(24, 82, 243, 1),
-              highlightColor: Color.fromRGBO(61, 158, 255, 1),
-              colorBrightness: Brightness.dark,
-              splashColor: Colors.grey,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0)),
-              child: Container(
-                padding: EdgeInsets.only(
-                    left: ScreenUtil().setWidth(12),
-                    right: ScreenUtil().setWidth(12),
-                    top: ScreenUtil().setWidth(2),
-                    bottom: ScreenUtil().setWidth(2)),
-                child: Text("编辑",style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w400,
-                    fontSize: ScreenUtil().setSp(12)
-                ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_){
-                  return KtvEdited(ktv: ktvDetailModel,);
-                }));
-              }
+              InkWell(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            colors:[
+                              Color.fromRGBO(61, 158, 255, 1),
+                              Color.fromRGBO(24, 82, 243, 1)
+                            ]
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [ //阴影
+                          BoxShadow(
+                              color:Colors.black45,
+                              offset: Offset(1.0,1.0),
+                              blurRadius: 2.0
+                          )
+                        ]//背景渐变
+                    ),
+                    padding: EdgeInsets.only(
+                        left: ScreenUtil().setWidth(12),
+                        right: ScreenUtil().setWidth(12),
+                        top: ScreenUtil().setWidth(2),
+                        bottom: ScreenUtil().setWidth(2)),
+                    child: Text("编辑",style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                        fontSize: ScreenUtil().setSp(12)
+                    ),
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_){
+                      return KtvEdited(ktv: ktvDetailModel,);
+                    }));
+                  }
+              )
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              (){
+                if(widget.ktv.type == 1){
+                  return LF();
+                }else{
+                  return YZH();
+                }
+              }(),
+              Text(widget.ktv.merchant_name,style: TextStyle(
+                  color: Colors.white,
+                  fontSize: ScreenUtil().setSp(12)
+              ))
+            ],
           )
         ],
       ),
@@ -171,7 +183,6 @@ class _KtvDetailState extends State<KtvDetail> {
 
   // 页面内容
   Widget _content(){
-
     return Container(
       child: Column(
         children: <Widget>[
@@ -257,7 +268,7 @@ class _KtvDetailState extends State<KtvDetail> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: tabList.map((item){
-          return _itemTabList(item['imgUrl'], item['title']);
+          return _itemTabList(item['imgUrl'], item['title'], item['index']);
         }).toList(),
       ),
     );
@@ -265,27 +276,31 @@ class _KtvDetailState extends State<KtvDetail> {
 
 
   // 详情子项
-  Widget _itemTabList(String imgUrl, String title){
-
-    return Container(
-      child:  Column(
-        children: <Widget>[
-          Container(
-            width: ScreenUtil().setWidth(52),
-            height: ScreenUtil().setHeight(52),
-            child: Image.asset(
-              imgUrl,
-              width: ScreenUtil().setWidth(50),
-              height: ScreenUtil().setHeight(50),
-              fit: BoxFit.contain,
+  Widget _itemTabList(String imgUrl, String title, int index){
+    return FlatButton(
+      child: Container(
+        child:  Column(
+          children: <Widget>[
+            Container(
+              width: ScreenUtil().setWidth(52),
+              height: ScreenUtil().setHeight(52),
+              child: Image.asset(
+                imgUrl,
+                width: ScreenUtil().setWidth(50),
+                height: ScreenUtil().setHeight(50),
+                fit: BoxFit.contain,
+              ),
             ),
-          ),
-          Text(title, style: TextStyle(
-            fontSize: ScreenUtil().setSp(12),
-            color: Colors.black,
-          ),)
-        ],
+            Text(title, style: TextStyle(
+              fontSize: ScreenUtil().setSp(12),
+              color: Colors.black,
+            ),)
+          ],
+        ),
       ),
+      onPressed: (){
+        _goPage(index);
+      },
     );
   }
 
@@ -294,6 +309,20 @@ class _KtvDetailState extends State<KtvDetail> {
   void initState() {
     getData();
     super.initState();
+  }
+
+  // 详情页
+  void _goPage(int index){
+    print(index);
+    switch(index){
+      case 0:
+        Navigator.push(context, MaterialPageRoute(
+          builder: (_){
+            return  EnterprisePage();
+          }
+        ));
+        break;
+    }
   }
 
   // 打电话

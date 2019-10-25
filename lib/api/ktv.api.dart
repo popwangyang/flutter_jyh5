@@ -1,3 +1,5 @@
+
+
 import 'package:dio/dio.dart';
 import '../libs/api.request.dart';
 
@@ -16,6 +18,15 @@ Future<Response> getKTVDetail(id, context){
       context,
       '/copyright/ktv/ktv/$id',
       options: Options(method: 'get')
+  );
+}
+
+Future<Response> createKTVDetail(data, context){
+  return ajax.request(
+      context,
+      '/copyright/ktv/ktv',
+      data: data,
+      options: Options(method: 'post')
   );
 }
 

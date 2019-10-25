@@ -101,6 +101,7 @@ class DatePick extends StatelessWidget {
                 locale: DateTimePickerLocale.zh_cn,
                 pickerMode: datePickerMode,
                 onConfirm: (date, index){
+                  print(foo(date));
                   onChang(foo(date));
                 }
             );
@@ -126,14 +127,16 @@ class DatePick extends StatelessWidget {
   }
 
   DateTime goo(String str){
-    DateTime result;
+    DateTime result = DateTime.now();
     if(type == DateType.DATE){
       result = DateTime.parse(str);
     }else{
-      List arr = str.split(':');
-      DateTime now = DateTime.now();
-      print(arr);
-      result = DateTime(now.year, now.month, now.day, int.parse(arr[0]), int.parse(arr[1]), int.parse(arr[2]));
+      if(str != ''){
+        List arr = str.split(':');
+        DateTime now = DateTime.now();
+        print(arr);
+        result = DateTime(now.year, now.month, now.day, int.parse(arr[0]), int.parse(arr[1]), int.parse(arr[2]));
+      }
     }
     return result;
   }

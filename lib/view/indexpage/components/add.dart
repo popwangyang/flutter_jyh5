@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jy_h5/common/components/ListPicker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jy_h5/view/shanghu/components/detail/edited.dart';
+import 'package:jy_h5/view/KTVPage/components/ktvEdite/ktvEdite.dart';
 
 class Add {
 
@@ -67,7 +68,14 @@ class Add {
                         'lib/assets/image/addktv.png',
                         "新建KTV",
                          (){
-
+                           Navigator.pop(context);
+                           Future.delayed(Duration(milliseconds: 200), (){
+                             Navigator.of(context).push(
+                                 MaterialPageRoute(builder: (_) {
+                                   return KtvEdited();
+                                 })
+                             );
+                           });
                         }
                     ),
                   ],

@@ -23,7 +23,6 @@ import 'package:jy_h5/common/style.dart';
 import 'package:jy_h5/api/ktv.api.dart';
 import 'package:jy_h5/model/ktv.dart';
 import 'package:jy_h5/libs/utils.dart';
-import 'dart:convert';
 
 class KtvEdited extends StatefulWidget {
 
@@ -41,7 +40,7 @@ class _KtvEditedState extends State<KtvEdited> {
       child: Scaffold(
         body: Column(
           children: <Widget>[
-            AppTitle(hasBack: true, title: 'KTV编辑',),
+            AppTitle(hasBack: true, title: pageTitle,),
             Expanded(
               child: _content(),
             )
@@ -64,7 +63,6 @@ class _KtvEditedState extends State<KtvEdited> {
             placeholder: '请输入',
             value: fromData['name'],
             onChange: (e){
-              print(e);
               fromData['name'] = e;
             },
           ),
@@ -85,7 +83,6 @@ class _KtvEditedState extends State<KtvEdited> {
             placeholder: '请输入',
             value: fromData['contact'],
             onChange: (e){
-              print(e);
               fromData['contact'] = e;
             },
           ),
@@ -94,7 +91,6 @@ class _KtvEditedState extends State<KtvEdited> {
             placeholder: '请输入',
             value: fromData['phone_number'],
             onChange: (e){
-              print(e);
               fromData['phone_number'] = e;
             },
           ),
@@ -115,7 +111,9 @@ class _KtvEditedState extends State<KtvEdited> {
             title: '开业时间',
             value: fromData['opening_hours'],
             onChang: (date){
-              fromData['opening_hours'] = date;
+              setState(() {
+                fromData['opening_hours'] = date;
+              });
             },
           ),
           ListSelected(
@@ -180,6 +178,9 @@ class _KtvEditedState extends State<KtvEdited> {
             margin: EdgeInsets.only(
                 top: ScreenUtil().setHeight(20),
                 bottom: ScreenUtil().setHeight(20),
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: ScreenUtil().setWidth(20)
             ),
             child: Button(
               text: '保存',
@@ -258,22 +259,37 @@ class _KtvEditedState extends State<KtvEdited> {
     '暂停营业'
   ];
 
+  String pageTitle;
+
   @override
   void initState() {
-    fromData['name'] = widget.ktv.name;
-    fromData['type'] = ktvType[widget.ktv.type - 1];
-    fromData['contact'] = widget.ktv.contact;
-    fromData['phone_number'] = widget.ktv.phoneNumber;
-    fromData['place_contact'] = widget.ktv.placeContact;
-    fromData['opening_hours'] = widget.ktv.openingHours;
-    fromData['business_state'] = businessStateList[widget.ktv.businessState - 1];
-    fromData['business_hours'] = widget.ktv.businessHours;
-    fromData['province_code'] = widget.ktv.provinceCode;
-    fromData['city_code'] = widget.ktv.cityCode;
-    fromData['county_code'] = widget.ktv.countyCode;
-    fromData['address'] = widget.ktv.address;
-    fromData['PCC'] = '${widget.ktv.province}/${widget.ktv.city}/${widget.ktv.county}';
-    controller.text = widget.ktv.address;
+    if(widget.ktv != null){
+      pageTitle = 'KTV编辑';
+      fromData['name'] = widget.ktv.name;
+      fromData['type'] = ktvType[widget.ktv.type - 1];
+      fromData['contact'] = widget.ktv.contact;
+      fromData['phone_number'] = widget.ktv.phoneNumber;
+      fromData['place_contact'] = widget.ktv.placeContact;
+      fromData['opening_hours'] = widget.ktv.openingHours;
+      fromData['business_state'] = businessStateList[widget.ktv.businessState - 1];
+      fromData['business_hours'] = widget.ktv.businessHours;
+      fromData['province_code'] = widget.ktv.provinceCode;
+      fromData['city_code'] = widget.ktv.cityCode;
+      fromData['county_code'] = widget.ktv.countyCode;
+      fromData['address'] = widget.ktv.address;
+      fromData['PCC'] = '${widget.ktv.province}/${widget.ktv.city}/${widget.ktv.county}';
+      controller.text = widget.ktv.address;
+    }else{
+      pageTitle = 'KTV创建';
+      Map result = {
+        'flag': 0,
+        'days': [1,2,3,4,5,6,7],
+        'start': '',
+        'end': ''
+      };
+      fromData['business_hours'] = BusinessHours.fromJson(result);
+      controller.text = null;
+    }
     super.initState();
   }
 
@@ -281,7 +297,7 @@ class _KtvEditedState extends State<KtvEdited> {
     bool validateState = Utils.validate(fromData, rule, context);
     print(validateState);
     if(validateState){
-      var id = widget.ktv.id;
+
 
       Map sendData = {
         'name': fromData['name'],
@@ -298,12 +314,18 @@ class _KtvEditedState extends State<KtvEdited> {
         'business_state': _businessState(fromData['business_state'])
       };
       print(sendData);
-
-      putKTVDetail(id, sendData, context).then((val){
-        Toast.show('修改成功', context, duration: 1, gravity: 1);
-        Navigator.pushNamed(context, 'indexPage');
-      });
-
+      if(widget.ktv != null){
+        var id = widget.ktv.id;
+        putKTVDetail(id, sendData, context).then((val){
+          Toast.show('修改成功', context, duration: 1, gravity: 1);
+          Navigator.pushNamed(context, 'indexPage');
+        });
+      }else{
+        createKTVDetail(sendData, context).then((val){
+          Toast.show('创建成功', context, duration: 1, gravity: 1);
+          Navigator.pushNamed(context, 'indexPage');
+        });
+      }
     }
   }
 

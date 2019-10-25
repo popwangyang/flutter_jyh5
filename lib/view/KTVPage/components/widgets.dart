@@ -5,6 +5,7 @@ class LF extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: ScreenUtil().setHeight(12),
       padding: EdgeInsets.only(left: ScreenUtil().setWidth(4), right: ScreenUtil().setWidth(4) ),
       margin: EdgeInsets.only(right: ScreenUtil().setWidth(8)),
       decoration: BoxDecoration(
@@ -25,6 +26,7 @@ class YZH extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: ScreenUtil().setHeight(12),
       padding: EdgeInsets.only(left: ScreenUtil().setWidth(4), right: ScreenUtil().setWidth(4)),
       margin: EdgeInsets.only(right: ScreenUtil().setWidth(8)),
       decoration: BoxDecoration(

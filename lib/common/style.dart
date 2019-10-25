@@ -59,6 +59,14 @@ class Style {
     );
   }
 
+  static TextStyle emptyTitle(){
+    return TextStyle(
+      fontSize: ScreenUtil().setSp(12),
+      color: Color.fromRGBO(198,203,212,1),
+      fontWeight: FontWeight.w400,
+    );
+  }
+
 
 
 }

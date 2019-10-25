@@ -243,7 +243,11 @@ class _LoginPageState extends State<LoginPage> {
 
   // 确定按钮
   Widget _loginBtn(){
-    return Button(text: '登录',isLoading: loading, onChange: _login,);
+    return Button(
+      text: '登录',
+      isLoading: loading,
+      onChange: _login,
+    );
   }
 
 
