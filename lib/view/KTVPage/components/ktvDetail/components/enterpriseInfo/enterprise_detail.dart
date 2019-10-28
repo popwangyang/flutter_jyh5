@@ -18,71 +18,95 @@ class EnterpriseDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Container(
-          child: Column(
-            children: <Widget>[
-              Strip(
-                title: '企业信息',
+    return Container(
+      height: MediaQuery.of(context).size.height - ScreenUtil().setHeight(70),
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            flex: 1,
+            child: Container(
+              child: Column(
+                children: <Widget>[
+                  Strip(
+                    title: '企业信息',
+                  ),
+                  ListItem(
+                    title: '企业注册名称',
+                    label: enterprise.companyName,
+                  ),
+                  ListItem(
+                    title: '营业执照编号',
+                    label: enterprise.licenseNumber,
+                    isLast: true,
+                  ),
+                      (){
+                    if(enterprise.licensePhoto !=null){
+                      return _box(
+                          '营业执照照片',
+                          enterprise.licensePhoto
+                      );
+                    }else{
+                      return Container();
+                    }
+                  }(),
+                  Strip(
+                    title: '法人信息',
+                  ),
+                  ListItem(
+                    title: '法人名称',
+                    label: enterprise.legalRepresentative,
+                  ),
+                  Opacity(
+                    opacity: enterprise.legalRepresentativeCard == null ? 0:1,
+                    child: ListItem(
+                      title: '身份证号',
+                      label: enterprise.legalRepresentativeCard,
+                    ),
+                  ),
+                      (){
+                    if(enterprise.identityCardPhoto !=null){
+                      return _box(
+                          '身份证照片',
+                          enterprise.identityCardPhoto
+                      );
+                    }else{
+                      return Container();
+                    }
+                  }(),
+                ],
               ),
-              ListItem(
-                title: '企业注册名称',
-                label: enterprise.companyName,
-              ),
-              ListItem(
-                title: '营业执照编号',
-                label: enterprise.licenseNumber,
-                isLast: true,
-              ),
-                  (){
-                if(enterprise.licensePhoto !=null){
-                  return _box(
-                      '营业执照照片',
-                      enterprise.licensePhoto
-                  );
-                }else{
-                  return Container();
-                }
-              }(),
-              Strip(
-                title: '法人信息',
-              ),
-              ListItem(
-                title: '法人名称',
-                label: enterprise.legalRepresentative,
-              ),
-              Opacity(
-                opacity: enterprise.legalRepresentativeCard == null ? 0:1,
-                child: ListItem(
-                  title: '身份证号',
-                  label: enterprise.legalRepresentativeCard,
-                ),
-              ),
-                  (){
-                if(enterprise.identityCardPhoto !=null){
-                  return _box(
-                      '身份证照片',
-                      enterprise.identityCardPhoto
-                  );
-                }else{
-                  return Container();
-                }
-              }(),
-            ],
+            ),
           ),
-        ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          child: Container(
+          Container(
             width: ScreenUtil().width,
             height: ScreenUtil().setHeight(50),
-            color: Colors.white,
-            child: Text("pppppp"),
-          ),
-        )
-      ],
+            alignment: Alignment.centerRight,
+            padding: EdgeInsets.symmetric(
+              horizontal: ScreenUtil().setWidth(10)
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(
+                  color: Colors.grey,
+                  width: 1
+                )
+              )
+            ),
+            child: RaisedButton(
+              child: Text("编辑"),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+              padding: EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 4,
+              ),
+              onPressed: (){
+
+              },
+            ),
+          )
+        ],
+      ),
     );
   }
 

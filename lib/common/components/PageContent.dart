@@ -30,7 +30,7 @@ class PageContent extends StatelessWidget {
         );
       }else if(pageStatues == 2){
         return SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
+//          physics: BouncingScrollPhysics(),
           child: content(),
         );
       }else if(pageStatues == 3){
