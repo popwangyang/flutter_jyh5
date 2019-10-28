@@ -38,3 +38,12 @@ Future<Response> putKTVDetail(id, data, context){
       options: Options(method: 'put')
   );
 }
+
+Future<Response> getUploadToken(data, context){
+  return ajax.request(
+      context,
+      '/copyright/upload/upload',
+      queryParameters: data,
+      options: Options(method: 'get')
+  );
+}
