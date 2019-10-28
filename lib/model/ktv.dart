@@ -1,5 +1,6 @@
 import 'dart:convert' as util;
 import 'package:jy_h5/libs/utils.dart';
+import 'dart:io';
 
 class KtvList {
   List<KTV> data;
@@ -214,5 +215,99 @@ class UploadToken{
       credential: json['credential'],
       key: json['key'],
     );
+  }
+}
+
+
+// 上传成功的返回值
+class UploadResult {
+  String format;
+  int id;
+  String key;
+  String name;
+  dynamic size;
+  File file;
+  String downloadUrl;
+  int type = 1;  // 1 为本地file类型，2 为网络请求内容
+
+  UploadResult(
+      {this.format,
+        this.id,
+        this.key,
+        this.name,
+        this.file,
+        this.type,
+        this.downloadUrl,
+        this.size});
+
+  UploadResult.fromJson(Map<String, dynamic> json) {
+    format = json['format'];
+    id = json['id'];
+    key = json['key'];
+    name = json['name'];
+    size = json['size'];
+    file = json['file'];
+    type = json['type'];
+    downloadUrl = json['downloadUrl'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['format'] = this.format;
+    data['id'] = this.id;
+    data['key'] = this.key;
+    data['name'] = this.name;
+    data['size'] = this.size;
+    data['type'] = this.type;
+    data['file'] = this.file;
+    data['downloadUrl'] = this.downloadUrl;
+    return data;
+  }
+
+  @override
+  bool operator ==(other) {
+    return this.id == other.id;
+  }
+}
+
+// 企业信息
+class Enterprise {
+  String legalRepresentativeCard;
+  String licenseNumber;
+  String companyName;
+  UploadResult licensePhoto;
+  String legalRepresentative;
+  UploadResult identityCardPhoto;
+  int id;
+
+  Enterprise(
+      {this.legalRepresentativeCard,
+        this.licenseNumber,
+        this.companyName,
+        this.licensePhoto,
+        this.legalRepresentative,
+        this.identityCardPhoto,
+        this.id});
+
+  Enterprise.fromJson(Map<String, dynamic> json) {
+    legalRepresentativeCard = json['legal_representative_card'];
+    licenseNumber = json['license_number'];
+    companyName = json['company_name'];
+    licensePhoto = json['license_photo'] != null ? UploadResult.fromJson(json['license_photo']):null;
+    legalRepresentative = json['legal_representative'];
+    identityCardPhoto = json['identity_card_photo'] != null ? UploadResult.fromJson(json['identity_card_photo']):null;
+    id = json['id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['legal_representative_card'] = this.legalRepresentativeCard;
+    data['license_number'] = this.licenseNumber;
+    data['company_name'] = this.companyName;
+    data['license_photo'] = this.licensePhoto;
+    data['legal_representative'] = this.legalRepresentative;
+    data['identity_card_photo'] = this.identityCardPhoto;
+    data['id'] = this.id;
+    return data;
   }
 }

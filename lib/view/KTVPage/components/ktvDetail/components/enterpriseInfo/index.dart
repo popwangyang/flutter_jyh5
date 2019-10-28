@@ -1,6 +1,7 @@
 // 依赖包
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 // 自定义组件
 import 'package:jy_h5/common/components/Appbar.dart';
@@ -8,10 +9,28 @@ import 'package:jy_h5/common/components/PageContent.dart';
 import 'package:jy_h5/common/components/Empty.dart';
 import 'package:jy_h5/common/components/Button.dart';
 import 'enterprise_edited.dart';
+import 'enterprise_detail.dart';
+
+// api
+import 'package:jy_h5/api/ktv.api.dart';
+
+// 企业模型
+import 'package:jy_h5/model/ktv.dart';
+
+// provider组件
+import 'package:provider/provider.dart';
+import 'package:jy_h5/store/model/ktvModel.dart';
 
 
 
 class EnterprisePage extends StatefulWidget {
+
+  EnterprisePage({
+    Key key,
+    this.ktvID}):super(key: key);
+
+  final int ktvID;
+
   @override
   _EnterprisePageState createState() => _EnterprisePageState();
 }
@@ -42,10 +61,11 @@ class _EnterprisePageState extends State<EnterprisePage> {
   }
 
   int pageStatues = 1;
+  Enterprise enterprise;
 
   Widget _content(){
-    return Container(
-      color: Colors.white,
+    return EnterpriseDetail(
+      enterprise: enterprise,
     );
   }
 
@@ -85,11 +105,21 @@ class _EnterprisePageState extends State<EnterprisePage> {
     setState(() {
       pageStatues = 1;
     });
-    Future.delayed(Duration(seconds: 1), (){
-      setState(() {
+    try{
+      var res = await getEnterprise(widget.ktvID, context);
+      List result = json.decode(res.toString())['results'];
+      if(result.length > 0){
+        pageStatues = 2;
+        enterprise = Enterprise.fromJson(result[0]);
+      }else{
         pageStatues = 4;
+      }
+      setState(() {});
+    }catch(err){
+      setState(() {
+        pageStatues = 3;
       });
-    });
+    }
   }
 
   @override

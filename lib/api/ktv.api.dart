@@ -47,3 +47,23 @@ Future<Response> getUploadToken(data, context){
       options: Options(method: 'get')
   );
 }
+
+//企业信息新增
+
+Future<Response> addEnterprise(data, context){
+  return ajax.request(
+      context,
+      '/copyright/ktv/enterprise',
+      data: data,
+      options: Options(method: 'post')
+  );
+}
+
+//企业信息获取
+Future<Response> getEnterprise(id, context){
+  return ajax.request(
+      context,
+      '/copyright/ktv/enterprise?ktv=$id',
+      options: Options(method: 'get')
+  );
+}

@@ -23,10 +23,11 @@ class AppTitle extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(left: ScreenUtil.getInstance().setWidth(10)),
+              padding: EdgeInsets.only(left: ScreenUtil.getInstance().setWidth(0)),
               child: (){
                 if(hasBack){
                   return FlatButton(
+                    padding: EdgeInsets.all(0),
                     child: Icon(Icons.arrow_back_ios, color: Color.fromRGBO(2, 2, 2, 1), size: ScreenUtil.getInstance().setSp(18),),
                     onPressed: (){
                       Navigator.of(context).pop();

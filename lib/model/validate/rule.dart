@@ -5,6 +5,7 @@ enum ruleType{
   Email,
   Phone,
   Array,
+  IDCard
 }
 
 class Rule {
@@ -39,6 +40,10 @@ class Rule {
               break;
             case ruleType.Phone:
               RegExp regExp = new RegExp(r"1[0-9]\d{9}$");
+              result = regExp.hasMatch(data);
+              break;
+            case ruleType.IDCard:
+              RegExp regExp = new RegExp(r"^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$");
               result = regExp.hasMatch(data);
               break;
             default:

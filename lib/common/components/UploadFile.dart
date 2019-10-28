@@ -10,6 +10,7 @@ import 'package:jy_h5/api/ktv.api.dart';
 import 'package:jy_h5/model/ktv.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:jy_h5/common/components/Dialog.dart';
 import 'package:photo_view/photo_view.dart';
 import 'dart:math' as math;
 
@@ -20,9 +21,13 @@ class UploadFile extends StatefulWidget {
     Key key,
     this.title,
     this.isRequired = true,
+    this.onChange,
+    this.isLast = false
   }):super(key: key);
   final String title;
   final bool isRequired;
+  final Function onChange;
+  final bool isLast;
 
   @override
   _UploadFileState createState() => _UploadFileState();
@@ -76,9 +81,11 @@ class _UploadFileState extends State<UploadFile> {
                   children: <Widget>[
                     Container(
                       child: Column(
-                        children: files.map((item){
+                        children: resultList.map((item){
                           return ImageUpload(
-                            file: item,
+                            data: item,
+                            onCancel: _onCancel,
+                            onSuccess: _onSuccess,
                           );
                         }).toList(),
                       ),
@@ -90,8 +97,8 @@ class _UploadFileState extends State<UploadFile> {
                         decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(
-                                color: Colors.black45,
-                                width: 0.2,
+                                color: Colors.grey,
+                                width: 1,
                                 style: BorderStyle.solid
                             )
                         ),
@@ -110,7 +117,7 @@ class _UploadFileState extends State<UploadFile> {
           ),
         ),
         Opacity(
-          opacity: 1,
+          opacity: widget.isLast ? 0:1,
           child: Divider(
             height: 2,
             color: Color.fromRGBO(235, 237, 240, 1),
@@ -193,7 +200,7 @@ class _UploadFileState extends State<UploadFile> {
     );
   }
 
-  List<File> files = [];
+  List<UploadResult> resultList = [];
 
   Future getImage(int index) async {
     File image;
@@ -203,33 +210,59 @@ class _UploadFileState extends State<UploadFile> {
     }else{
       image = await ImagePicker.pickImage(source: ImageSource.camera);
     }
-    int length = await image.length();
-
-    String type = image.path.split('.').last;
-
-
+    String type = 'image/' + image.path.split('.').last;
     FileStat fileStat = await image.stat();
+    Map<String, dynamic> data = {
+      'name': image.path.split('/').last,
+      'id': null,
+      'key': null,
+      'downloadUrl': null,
+      'format': type,
+      'type': 1,
+      'size': fileStat.size,
+      'file': image
+    };
+    UploadResult uploadResult = UploadResult.fromJson(data);
 
     setState(() {
-      files.add(image);
+      resultList.add(uploadResult);
     });
-
-    print(type);
   }
+
+  _onCancel(UploadResult result){
+    setState(() {
+      resultList.remove(result);
+    });
+    _getID();
+  }
+
+  _onSuccess(UploadResult result){
+    _getID();
+  }
+
+  _getID(){
+    List ids = [];
+    resultList.forEach((item){
+      ids.add(item.id);
+    });
+    widget.onChange(ids);
+  }
+
 }
 
 class ImageUpload extends StatefulWidget {
 
   ImageUpload({
     Key key,
-    this.file,
-    this.filePath,
-    this.fileType,
+    this.onSuccess,
+    this.onCancel,
+    this.data,
   }):super(key: key);
 
-  final File file;
-  final String filePath;
-  final String fileType;
+  final UploadResult data;
+  final Function onSuccess;
+  final Function onCancel;
+
 
   @override
   _ImageUploadState createState() => _ImageUploadState();
@@ -256,15 +289,15 @@ class _ImageUploadState extends State<ImageUpload> {
           alignment: Alignment.center,
           children: <Widget>[
              (){
-              if(widget.file != null){
+              if(widget.data.type == 1){
                 return Image.file(
-                  widget.file,
+                  widget.data.file,
                   width: ScreenUtil().setWidth(78),
                   fit: BoxFit.fitWidth,
                 );
               }else{
                 return Image.network(
-                  widget.filePath,
+                  widget.data.key,
                   width: ScreenUtil().setWidth(78),
                   fit: BoxFit.fitWidth,
                 );
@@ -328,10 +361,13 @@ class _ImageUploadState extends State<ImageUpload> {
                 return Positioned(
                   right: ScreenUtil().setWidth(4),
                   bottom: ScreenUtil().setHeight(4),
-                  child: Icon(
-                    Icons.delete,
-                    size: ScreenUtil().setSp(16),
-                    color: Colors.grey,
+                  child: InkWell(
+                    child: Icon(
+                      Icons.delete,
+                      size: ScreenUtil().setSp(16),
+                      color: Colors.yellow,
+                    ),
+                    onTap: _deleted,
                   ),
                 );
               }else{
@@ -347,22 +383,24 @@ class _ImageUploadState extends State<ImageUpload> {
   UploadToken _uploadToken;
   double percentage = 0;
   int uploadStatues = 0;  // 0为正在上传，1为上传完成，2上传失败。
+  UploadResult uploadResult;  // 上传的结果
 
   @override
   void initState() {
     // TODO: implement initState
-    upload();
+    if(widget.data.type == 1){
+      upload();
+    }
     super.initState();
   }
 
   upload() async{
-
     _uploadToken = await getToken();
     Response response;
     FormData formData = new FormData.from({
       "x:id": "",
       "key": _uploadToken.key,
-      "file": new UploadFileInfo(new File(widget.file.path), widget.file.path.split('/').last),
+      "file": new UploadFileInfo(new File(widget.data.file.path), widget.data.name),
       "token": _uploadToken.credential
     });
     response = await new Dio().post(
@@ -371,6 +409,11 @@ class _ImageUploadState extends State<ImageUpload> {
         onSendProgress: progress,
     );
     print(response);
+
+    uploadResult = UploadResult.fromJson(json.decode(response.toString()));
+    widget.data.id = uploadResult.id;
+    widget.data.key = uploadResult.key;
+    widget.onSuccess(uploadResult);
   }
 
   progress(int count, int total){
@@ -384,18 +427,27 @@ class _ImageUploadState extends State<ImageUpload> {
   }
 
   Future<UploadToken> getToken() async{  // 获取七牛云的上传凭证
-    String path = widget.file.path;
     var sendData = {
-      'name': path.split('/').last,
-      'mimie': 'image/${path.split('.').last}',
-      'size': widget.file.lengthSync()
+      'name': widget.data.name,
+      'mimie': widget.data.format,
+      'size': widget.data.size
     };
     var res = await getUploadToken(sendData, context);
     UploadToken uploadToken = UploadToken.fromJson(json.decode(res.toString()));
     return uploadToken;
   }
 
-
+  _deleted(){
+    DialogWidget.confirm(
+        context,
+        title: '提示',
+        message: '是否要删除该文件？'
+    ).then((val){
+      if(val == 'ok'){
+        widget.onCancel(uploadResult);
+      }
+    });
+  }
 }
 
 

@@ -6,6 +6,8 @@ import 'package:jy_h5/common/components/PageContent.dart';
 import '../widgets.dart';
 import 'package:jy_h5/common/components/ListItem.dart';
 import 'package:jy_h5/view/KTVPage/components/ktvEdite/ktvEdite.dart';
+import 'package:provider/provider.dart';
+import 'package:jy_h5/store/model/ktvModel.dart';
 
 // 工具类
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -66,6 +68,10 @@ class _KtvDetailState extends State<KtvDetail> {
 
   @override
   Widget build(BuildContext context) {
+
+    Ktv ktv = Provider.of<Ktv>(context);
+    ktv.setKtvID(widget.ktv.id);
+
     return Scaffold(
       body: Container(
        child: Column(
@@ -318,7 +324,9 @@ class _KtvDetailState extends State<KtvDetail> {
       case 0:
         Navigator.push(context, MaterialPageRoute(
           builder: (_){
-            return  EnterprisePage();
+            return  EnterprisePage(
+              ktvID: ktvDetailModel.id,
+            );
           }
         ));
         break;
