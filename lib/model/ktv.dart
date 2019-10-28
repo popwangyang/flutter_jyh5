@@ -199,3 +199,20 @@ class BusinessHours {
     return result;
   }
 }
+
+class UploadToken{
+  String credential;
+  String key;
+
+  UploadToken({
+    this.key,
+    this.credential,
+  });
+
+  factory UploadToken.fromJson(dynamic json){
+    return UploadToken(
+      credential: json['credential'],
+      key: json['key'],
+    );
+  }
+}

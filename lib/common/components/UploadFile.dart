@@ -1,9 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jy_h5/common/style.dart';
 import 'package:jy_h5/common/components/ListPicker.dart';
 import 'dart:io';
+import 'package:jy_h5/api/ktv.api.dart';
+import 'package:jy_h5/model/ktv.dart';
+import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:photo_view/photo_view.dart';
 import 'dart:math' as math;
 
 class UploadFile extends StatefulWidget {
@@ -232,30 +239,163 @@ class _ImageUploadState extends State<ImageUpload> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: ScreenUtil().setWidth(78),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.grey,
+          width: .5,
+        )
+      ),
       margin: EdgeInsets.only(
           bottom: ScreenUtil().setHeight(20)
       ),
       child: Transform.rotate(
         alignment: Alignment.center,
         angle: 0,
-        child: (){
-          if(widget.file != null){
-            return Image.file(
-              widget.file,
-              width: ScreenUtil().setWidth(78),
-              fit: BoxFit.fitWidth,
-            );
-          }else{
-            return Image.network(
-              widget.filePath,
-              width: ScreenUtil().setWidth(78),
-              fit: BoxFit.fitWidth,
-            );
-          }
-        }(),
+        child: Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+             (){
+              if(widget.file != null){
+                return Image.file(
+                  widget.file,
+                  width: ScreenUtil().setWidth(78),
+                  fit: BoxFit.fitWidth,
+                );
+              }else{
+                return Image.network(
+                  widget.filePath,
+                  width: ScreenUtil().setWidth(78),
+                  fit: BoxFit.fitWidth,
+                );
+              }
+            }(),
+            (){
+              if(uploadStatues != 1){
+                return Positioned(
+                  left: 0,
+                  top: 0,
+                  child: Container(
+                    width: ScreenUtil().setHeight(78),
+                    height: ScreenUtil().height,
+                    color: Colors.black.withOpacity(0.7),
+                  ),
+                );
+              }else{
+                return Container();
+              }
+            }(),
+            (){
+              if(uploadStatues == 0){
+                return Container(
+                  width: ScreenUtil().setWidth(30),
+                  height: ScreenUtil().setHeight(30),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: Center(
+                    child: Text('${(percentage * 100).toStringAsFixed(0)}%',
+                      style: TextStyle(
+                          fontSize: ScreenUtil().setSp(10),
+                          color: Colors.grey
+                      ),
+                    ),
+                  ),
+                );
+              }else{
+                return Container();
+              }
+            }(),
+            (){
+              if(uploadStatues == 0){
+                return SizedBox(
+                  width: ScreenUtil().setWidth(30),
+                  height: ScreenUtil().setHeight(30),
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.grey,
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation(Colors.blue),
+                    value: percentage,
+                  ),
+                );
+              }else{
+                return Container();
+              }
+            }(),
+            (){
+              if(uploadStatues == 1){
+                return Positioned(
+                  right: ScreenUtil().setWidth(4),
+                  bottom: ScreenUtil().setHeight(4),
+                  child: Icon(
+                    Icons.delete,
+                    size: ScreenUtil().setSp(16),
+                    color: Colors.grey,
+                  ),
+                );
+              }else{
+                return Container();
+              }
+            }()
+          ],
+        ),
       ),
-    );;
+    );
   }
+
+  UploadToken _uploadToken;
+  double percentage = 0;
+  int uploadStatues = 0;  // 0为正在上传，1为上传完成，2上传失败。
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    upload();
+    super.initState();
+  }
+
+  upload() async{
+
+    _uploadToken = await getToken();
+    Response response;
+    FormData formData = new FormData.from({
+      "x:id": "",
+      "key": _uploadToken.key,
+      "file": new UploadFileInfo(new File(widget.file.path), widget.file.path.split('/').last),
+      "token": _uploadToken.credential
+    });
+    response = await new Dio().post(
+        "https://up-z1.qiniup.com/",
+        data: formData,
+        onSendProgress: progress,
+    );
+    print(response);
+  }
+
+  progress(int count, int total){
+    setState(() {
+      percentage = count / total;
+      if(percentage == 1.0){
+        uploadStatues = 1;
+      }
+    });
+
+  }
+
+  Future<UploadToken> getToken() async{  // 获取七牛云的上传凭证
+    String path = widget.file.path;
+    var sendData = {
+      'name': path.split('/').last,
+      'mimie': 'image/${path.split('.').last}',
+      'size': widget.file.lengthSync()
+    };
+    var res = await getUploadToken(sendData, context);
+    UploadToken uploadToken = UploadToken.fromJson(json.decode(res.toString()));
+    return uploadToken;
+  }
+
+
 }
 
 
