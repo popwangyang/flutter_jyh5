@@ -100,7 +100,8 @@ class _KtvPageState extends State<KtvPage>  with AutomaticKeepAliveClientMixin  
     setState(() {
       pageStatues = 1;
     });
-    await getData();
+    KtvList ktvList = await getData();
+    dataList = ktvList.data;
   }
 
   Future _refresh() async{
@@ -130,10 +131,12 @@ class _KtvPageState extends State<KtvPage>  with AutomaticKeepAliveClientMixin  
           'name': ''
         };
         var results = await getKTVList(sendData, context);
+
         var data = json.decode(results.toString());
         KtvList ktvList  = KtvList.fromJson(data['results']);
         setState(() {
           dataList.addAll(ktvList.data);
+
         });
         completer.complete(ktvList.data);
       }else{

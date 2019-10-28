@@ -181,8 +181,11 @@ class _ShanghuPageState extends State<ShanghuPage>  with AutomaticKeepAliveClien
   }
 
   _reload() async{
-    await getData();
-
+    setState(() {
+      pageStatues = 1;
+    });
+    MerchantList merchantList = await getData();
+    dataList = merchantList.data;
   }
 
   @override
@@ -220,6 +223,7 @@ class _ShanghuPageState extends State<ShanghuPage>  with AutomaticKeepAliveClien
       total = data['count'];
       completer.complete(merchantList);
     }catch(err){
+      print("$err+++++++++++++++");
       setState(() {
         pageStatues = 3;
       });

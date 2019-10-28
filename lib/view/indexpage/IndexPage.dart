@@ -22,8 +22,8 @@ class _IndexPageState extends State<IndexPage> {
 
   @override
   Widget build(BuildContext context) {
-    Login login = Provider.of<Login>(context);
-    login.getLoginInfo(context);
+//    Login login = Provider.of<Login>(context);
+//    login.getLoginInfo(context);
     return Scaffold(
      body: BottomBar(
        page: IndexedStack(
@@ -47,8 +47,6 @@ class _IndexPageState extends State<IndexPage> {
 
   @override
   void initState() {
-//    Login login = Provider.of<Login>(context);
-//    login.getLoginInfo(context);
     super.initState();
   }
   

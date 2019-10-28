@@ -93,10 +93,13 @@ class DialogWidget {
           );
         },
         transitionBuilder: (ctx, animation, _, child) {
-          return ScaleTransition(
-            alignment: Alignment.center, // 添加这个
-            scale: animation,
-            child: child,
+          return FadeTransition(
+            opacity: animation,
+            child: ScaleTransition(
+              alignment: Alignment.center, // 添加这个
+              scale: animation,
+              child: child,
+            ),
           );
         },
       ).then((v){
@@ -231,10 +234,13 @@ class DialogWidget {
           );
         },
         transitionBuilder: (ctx, animation, _, child) {
-          return ScaleTransition(
-            alignment: Alignment.center, // 添加这个
-            scale: animation,
-            child: child,
+          return FadeTransition(
+            opacity: animation,
+            child: ScaleTransition(
+              alignment: Alignment.center, // 添加这个
+              scale: animation,
+              child: child,
+            ),
           );
         },
       ).then((v){

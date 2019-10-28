@@ -31,6 +31,7 @@ class Login with ChangeNotifier {
       _user = User.fromJson(userData);
       await Utils.setToken(res.data['token']);
       await Utils.setLocalData('user', json.encode(_user.toJson()));
+      print(_user);
       completer.complete(_user);
     }catch(err){
       completer.completeError(err);
@@ -51,6 +52,7 @@ class Login with ChangeNotifier {
       await Utils.removeToken();
       user.autoLogin = false;
       await Utils.setLocalData('user', json.encode(user.toJson()));
+      companyBrands = null;
       completer.complete('ok');
     }catch(error){
       completer.completeError(error);

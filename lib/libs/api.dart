@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:jy_h5/libs/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
+import 'package:provider/provider.dart';
+import 'package:jy_h5/store/model/loginModel.dart';
 
 class HttpRequest {
 
@@ -26,6 +28,7 @@ class HttpRequest {
   }
 
   InterceptorsWrapper _wrapper(BuildContext context){
+
     return InterceptorsWrapper(onRequest: (RequestOptions options) async{
       var token = await Utils.getToken();
       if(token != null){
@@ -41,8 +44,12 @@ class HttpRequest {
       // Do something with response error
       int stateCode = e.response.statusCode;
       print(e.response.data['message']);
-      if(stateCode == 401){
-        Navigator.pushNamed(context, 'error_404');
+      if(stateCode == 401){  // 无权限返回登录页面；
+      Login login = Provider.of<Login>(context);
+          login.logOut().then((e){
+            Navigator.of(context).pushNamed('login');
+          });
+//        Navigator.of(context).pushNamed('login');
       }else if(stateCode == 400){
         Toast.show(e.response.data['message'], context, duration: 2, gravity: 1);
       }
