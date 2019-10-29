@@ -6,8 +6,14 @@ import 'router/router.dart';
 import 'view/login.dart';
 import 'common/theme.dart';
 
+// 网络请求在浏览器中查看，需要翻墙
+//import 'package:flutter_stetho/flutter_stetho.dart';
+
 import 'view/initPage.dart';
-void main() => runApp(MyApp());
+void main() {
+//  Stetho.initialize();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override

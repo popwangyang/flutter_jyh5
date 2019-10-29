@@ -20,6 +20,8 @@ import 'dart:convert';
 
 // 企业信息
 import 'components/enterpriseInfo/index.dart';
+// 实施信息
+import 'components/implementInfo/index.dart';
 
 
 class KtvDetail extends StatefulWidget {
@@ -328,6 +330,15 @@ class _KtvDetailState extends State<KtvDetail> {
               ktvID: ktvDetailModel.id,
             );
           }
+        ));
+        break;
+      case 1:
+        Navigator.push(context, MaterialPageRoute(
+            builder: (_){
+              return  ImplementPage(
+                ktvID: ktvDetailModel.id,
+              );
+            }
         ));
         break;
     }

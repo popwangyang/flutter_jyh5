@@ -1,13 +1,42 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:jy_h5/model/vod.dart';
+import 'package:jy_h5/api/ktv.api.dart';
+import 'dart:async';
 
 class Ktv with ChangeNotifier{
   int _ktvID;
 
   int get ktvID => _ktvID;
 
+  List _vodList;
+
+  List get vodList => _vodList;
+
   void setKtvID(int id){
     _ktvID = id;
   }
+
+  Future getVod(params, context) async{
+    Completer completer = new Completer();
+
+    try{
+     var res =  await getVodList(params, context);
+     var data = json.decode(res.toString())['results'];
+     _vodList = data.map((item){
+       return VODProvider.fromJson(item);
+     }).toList();
+     print(_vodList);
+     completer.complete(true);
+    }catch(err){
+      print(err);
+     completer.complete(err);
+    }
+    return completer.future;
+  }
+
+
 
 }

@@ -117,12 +117,12 @@ class DialogWidget {
   static Future confirm(BuildContext context, {
     String title = '',
     String message = "弹框内容",
+    Widget messageWidget,
     bool barrierDismissible = true
   }){
     Completer completer = Completer();
     if(!flag){
       flag = true;
-      print("showDialog");
       showGeneralDialog(
         context: context,
         barrierLabel: "你好",
@@ -149,7 +149,7 @@ class DialogWidget {
                         padding: EdgeInsets.all(10),
                         child: Column(
                           children: <Widget>[
-                                (){
+                            (){
                               if(title != null && title != ''){
                                 return Text(title, style: TextStyle(
                                     fontSize: ScreenUtil().setSp(14),
@@ -164,12 +164,18 @@ class DialogWidget {
                             Expanded(
                               child: Container(
                                 alignment: Alignment.center,
-                                child:  Text(message,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: ScreenUtil().setSp(14),
-                                      color: Color(0xFF7d7e80)
-                                  ),),
+                                child:  (){
+                                  if(messageWidget != null){
+                                    return messageWidget;
+                                  }else{
+                                    return Text(message,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: ScreenUtil().setSp(14),
+                                          color: Color(0xFF7d7e80)
+                                      ),);
+                                  }
+                                }(),
                               ),
                             ),
                           ],

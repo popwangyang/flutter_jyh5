@@ -228,7 +228,6 @@ class UploadResult {
   dynamic size;
   File file;
   String downloadUrl;
-  int type = 1;  // 1 为本地file类型，2 为网络请求内容
 
   UploadResult(
       {this.format,
@@ -236,7 +235,6 @@ class UploadResult {
         this.key,
         this.name,
         this.file,
-        this.type,
         this.downloadUrl,
         this.size});
 
@@ -247,8 +245,7 @@ class UploadResult {
     name = json['name'];
     size = json['size'];
     file = json['file'];
-    type = json['type'];
-    downloadUrl = json['downloadUrl'];
+    downloadUrl = json['download_url'];
   }
 
   Map<String, dynamic> toJson() {
@@ -258,9 +255,8 @@ class UploadResult {
     data['key'] = this.key;
     data['name'] = this.name;
     data['size'] = this.size;
-    data['type'] = this.type;
     data['file'] = this.file;
-    data['downloadUrl'] = this.downloadUrl;
+    data['download_url'] = this.downloadUrl;
     return data;
   }
 

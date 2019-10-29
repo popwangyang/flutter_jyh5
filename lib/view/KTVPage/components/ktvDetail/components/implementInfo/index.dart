@@ -8,42 +8,35 @@ import 'package:jy_h5/common/components/Appbar.dart';
 import 'package:jy_h5/common/components/PageContent.dart';
 import 'package:jy_h5/common/components/Empty.dart';
 import 'package:jy_h5/common/components/Button.dart';
-import 'enterprise_edited.dart';
-import 'enterprise_detail.dart';
-
-// api
 import 'package:jy_h5/api/ktv.api.dart';
 
-// 企业模型
-import 'package:jy_h5/model/ktv.dart';
-
-// provider组件
 import 'package:provider/provider.dart';
 import 'package:jy_h5/store/model/ktvModel.dart';
 
+import 'implement_edited.dart';
+import 'implement_detail.dart';
 
+class ImplementPage extends StatefulWidget {
 
-class EnterprisePage extends StatefulWidget {
-
-  EnterprisePage({
-    Key key,
-    this.ktvID}):super(key: key);
+  ImplementPage({Key key, this.ktvID}):super(key: key);
 
   final int ktvID;
 
   @override
-  _EnterprisePageState createState() => _EnterprisePageState();
+  _ImplementPageState createState() => _ImplementPageState();
 }
 
-class _EnterprisePageState extends State<EnterprisePage> {
+class _ImplementPageState extends State<ImplementPage> {
   @override
   Widget build(BuildContext context) {
+    ktv = Provider.of<Ktv>(context);
+
     return Scaffold(
       body: Column(
         children: <Widget>[
           AppTitle(
             hasBack: true,
-            title: '企业信息',
+            title: '实施信息',
           ),
           Expanded(
             flex: 1,
@@ -54,20 +47,13 @@ class _EnterprisePageState extends State<EnterprisePage> {
               emptyWidget: _emptyWidget(),
             ),
           )
-
         ],
       ),
     );
   }
 
   int pageStatues = 1;
-  Enterprise enterprise;
-
-  Widget _content(){
-    return EnterpriseDetail(
-      enterprise: enterprise,
-    );
-  }
+  Ktv ktv;
 
   Widget _emptyWidget(){
     return Container(
@@ -75,19 +61,23 @@ class _EnterprisePageState extends State<EnterprisePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Empty(
-            text: '暂无企业信息',
+            text: '暂无实施信息',
           ),
           Padding(
             padding: EdgeInsets.symmetric(
-              vertical: ScreenUtil().setHeight(10)
+                vertical: ScreenUtil().setHeight(10)
             ),
             child:  ButtonCircle(
-              text: '新建企业信息',
-              onClick: (){
-                Navigator.of(context).push(
+              text: '新建实施信息',
+              onClick: () async{
+                var sendData = {
+                  'state': 1
+                };
+                await ktv.getVod(sendData, context);
+                Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (_){
-                      return EnterpriseEdited();
+                      return ImplementEdited();
                     }
                   )
                 );
@@ -99,35 +89,40 @@ class _EnterprisePageState extends State<EnterprisePage> {
     );
   }
 
+  Widget _content(){
+    return Container(
+      child: ImplementDetail(),
+    );
+  }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    getData();
+    super.initState();
+  }
 
   getData() async{
     setState(() {
       pageStatues = 1;
     });
     try{
-      var res = await getEnterprise(widget.ktvID, context);
-      List result = json.decode(res.toString())['results'];
+      var res = await getImplement(widget.ktvID, context);
+      var result = json.decode(res.toString())['results'];
+      print(result);
       if(result.length > 0){
         pageStatues = 2;
-        enterprise = Enterprise.fromJson(result[0]);
-        print(enterprise.identityCardPhoto);
       }else{
         pageStatues = 4;
       }
       setState(() {});
     }catch(err){
-      print(err);
       setState(() {
         pageStatues = 3;
       });
     }
   }
 
-  @override
-  void initState() {
-    getData();
-    super.initState();
-  }
-}
 
+
+}

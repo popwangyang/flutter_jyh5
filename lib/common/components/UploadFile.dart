@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,12 +23,17 @@ class UploadFile extends StatefulWidget {
     this.title,
     this.isRequired = true,
     this.onChange,
-    this.isLast = false
+    this.isLast = false,
+    this.value,
+    this.maxLength = 1,
+
   }):super(key: key);
   final String title;
   final bool isRequired;
   final Function onChange;
   final bool isLast;
+  final List value;
+  final int maxLength;
 
   @override
   _UploadFileState createState() => _UploadFileState();
@@ -78,8 +84,10 @@ class _UploadFileState extends State<UploadFile> {
                 width: ScreenUtil().width,
                 alignment: Alignment.centerLeft,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
+                      alignment: Alignment.centerLeft,
                       child: Column(
                         children: resultList.map((item){
                           return ImageUpload(
@@ -90,26 +98,33 @@ class _UploadFileState extends State<UploadFile> {
                         }).toList(),
                       ),
                     ),
-                    InkWell(
-                      child: Container(
-                        width: ScreenUtil().setWidth(78),
-                        height: ScreenUtil().setHeight(78),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                                color: Colors.grey,
-                                width: 1,
-                                style: BorderStyle.solid
-                            )
-                        ),
-                        child: Icon(
-                          Icons.add,
-                          size: ScreenUtil().setSp(30),
-                          color: Colors.grey,
-                        ),
-                      ),
-                      onTap: _showPicker,
-                    ),
+                    (){
+                      if(resultList.length < widget.maxLength){
+                        return InkWell(
+                          child: Container(
+                            width: ScreenUtil().setWidth(78),
+                            height: ScreenUtil().setHeight(78),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1,
+                                    style: BorderStyle.solid
+                                )
+                            ),
+                            child: Icon(
+                              Icons.add,
+                              size: ScreenUtil().setSp(30),
+                              color: Colors.grey,
+                            ),
+                          ),
+                          onTap: _showPicker,
+                        );
+                      }else{
+                        return Container();
+                      }
+                    }()
+                    ,
                   ],
                 ),
               ),
@@ -200,7 +215,13 @@ class _UploadFileState extends State<UploadFile> {
     );
   }
 
-  List<UploadResult> resultList = [];
+  List resultList = [];
+
+  @override
+  void initState() {
+    resultList = widget.value;
+    super.initState();
+  }
 
   Future getImage(int index) async {
     File image;
@@ -218,7 +239,6 @@ class _UploadFileState extends State<UploadFile> {
       'key': null,
       'downloadUrl': null,
       'format': type,
-      'type': 1,
       'size': fileStat.size,
       'file': image
     };
@@ -241,12 +261,10 @@ class _UploadFileState extends State<UploadFile> {
   }
 
   _getID(){
-    List ids = [];
-    resultList.forEach((item){
-      ids.add(item.id);
-    });
-    widget.onChange(ids);
+    widget.onChange(resultList);
   }
+
+
 
 }
 
@@ -289,7 +307,7 @@ class _ImageUploadState extends State<ImageUpload> {
           alignment: Alignment.center,
           children: <Widget>[
              (){
-              if(widget.data.type == 1){
+              if(widget.data.downloadUrl == null){
                 return Image.file(
                   widget.data.file,
                   width: ScreenUtil().setWidth(78),
@@ -297,7 +315,7 @@ class _ImageUploadState extends State<ImageUpload> {
                 );
               }else{
                 return Image.network(
-                  widget.data.key,
+                  widget.data.downloadUrl,
                   width: ScreenUtil().setWidth(78),
                   fit: BoxFit.fitWidth,
                 );
@@ -365,7 +383,7 @@ class _ImageUploadState extends State<ImageUpload> {
                     child: Icon(
                       Icons.delete,
                       size: ScreenUtil().setSp(16),
-                      color: Colors.yellow,
+                      color: Colors.white,
                     ),
                     onTap: _deleted,
                   ),
@@ -388,8 +406,10 @@ class _ImageUploadState extends State<ImageUpload> {
   @override
   void initState() {
     // TODO: implement initState
-    if(widget.data.type == 1){
+    if(widget.data.downloadUrl == null){
       upload();
+    }else{
+      uploadStatues = 1;
     }
     super.initState();
   }
@@ -444,7 +464,12 @@ class _ImageUploadState extends State<ImageUpload> {
         message: '是否要删除该文件？'
     ).then((val){
       if(val == 'ok'){
-        widget.onCancel(uploadResult);
+        if(widget.data.downloadUrl == null){
+          widget.onCancel(uploadResult);
+        }else{
+          widget.onCancel(widget.data);
+        }
+
       }
     });
   }
