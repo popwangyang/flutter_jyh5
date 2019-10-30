@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 // 自定义组件
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jy_h5/common/components/ListItem.dart';
+import 'components/system_upgrade.dart';
 import 'package:jy_h5/common/components/ListPicker.dart';
 import 'package:jy_h5/common/components/Dialog.dart';
 
@@ -81,204 +82,6 @@ class _ImplementDetailState extends State<ImplementDetail> {
     );
   }
 
-  Widget _pick(){
-    return Material(
-      child: Container(
-        width: ScreenUtil().setHeight(375),
-        height: ScreenUtil().setHeight(216),
-        color: Colors.white,
-        child: Row(
-          children: <Widget>[
-            Container(
-              width: ScreenUtil().setWidth(93.75 * 3),
-              height: ScreenUtil().setHeight(216),
-              color: Colors.white,
-              child: Column(
-                children: <Widget>[
-                  Wrap(
-                    children: number.map((item){
-                      return _pickItem1(item);
-                    }).toList(),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      FlatButton(
-                        child: Container(
-                          width: ScreenUtil().setWidth(187.5),
-                          height: ScreenUtil().setHeight(54),
-                          decoration: BoxDecoration(
-                              border: Border(
-                                right: BorderSide(
-                                    width: 1,
-                                    color: Color(0xffebedf0)
-                                ),
-                              )
-                          ),
-                          child: Center(
-                            child: Text('0', style: TextStyle(
-                                fontSize: ScreenUtil().setSp(24),
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black
-                            ),),
-                          ),
-                        ),
-                        onPressed: (){
-
-                        },
-                      ),
-                      FlatButton(
-                        child: Container(
-                          width: ScreenUtil().setWidth(93.75),
-                          height: ScreenUtil().setHeight(54),
-                          decoration: BoxDecoration(
-                              border: Border(
-                                right: BorderSide(
-                                    width: 1,
-                                    color: Color(0xffebedf0)
-                                ),
-                              )
-                          ),
-                          child: Center(
-                            child: Text('.', style: TextStyle(
-                                fontSize: ScreenUtil().setSp(24),
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black
-                            ),),
-                          ),
-                        ),
-                        onPressed: (){
-
-                        },
-                      ),
-                    ],
-                  )
-                ],
-              )
-              ),
-            Container(
-              width: ScreenUtil().setWidth(93.75),
-              height: ScreenUtil().setHeight(216),
-              child: Column(
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: FlatButton(
-                      color: Color(0xffebedf0),
-                      child: Container(
-                        width: ScreenUtil().setWidth(93.75),
-                        child: Center(
-                          child: Text(
-                            '删除',
-                            style: TextStyle(
-                                fontSize: ScreenUtil().setSp(16),
-                                color: Colors.black
-                            ),
-                          ),
-                        ),
-                      ),
-                      onPressed: (){
-
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child:FlatButton(
-                      color: Color(0xff1989fa),
-                      child: Container(
-                        width: ScreenUtil().setWidth(93.75),
-                        child: Center(
-                          child: Text(
-                            '完成',
-                            style: TextStyle(
-                                fontSize: ScreenUtil().setSp(16),
-                                color: Colors.white
-                            ),
-                          ),
-                        ),
-                      ),
-                      onPressed: (){
-
-                      },
-                    ) ,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _pickItem1(String num){
-    return FlatButton(
-      child: Container(
-        width: ScreenUtil().setWidth(93.75),
-        height: ScreenUtil().setHeight(54),
-        decoration: BoxDecoration(
-            border: Border(
-                right: BorderSide(
-                    width: 1,
-                    color: Color(0xffebedf0)
-                ),
-                bottom: BorderSide(
-                    width: 1,
-                    color: Color(0xffebedf0)
-                )
-            )
-        ),
-        child: Center(
-          child: Text(num, style: TextStyle(
-              fontSize: ScreenUtil().setSp(24),
-              fontWeight: FontWeight.w600,
-              color: Colors.black
-          ),),
-        ),
-      ),
-      onPressed: (){
-        print(num);
-      },
-    );
-  }
-
-  Widget _messageWidget(){
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Text.rich(TextSpan(
-            children: [
-              TextSpan(
-                text: '当前版本',
-              ),
-              TextSpan(
-                text: 'V1.0.1',
-                style: TextStyle(
-                  color: Colors.grey
-                )
-              )
-            ]
-          )),
-          TextField(
-
-          )
-        ],
-      ),
-    );
-  }
-
-  List number = [
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9'
-  ];
-
   List tabList = [
     {
       'index': 0,
@@ -312,19 +115,28 @@ class _ImplementDetailState extends State<ImplementDetail> {
       case 0:
         _upgrade();
         break;
+      case 1:
+        _upRecord();
+        break;
     }
   }
 
   _upgrade(){
 
-    DialogWidget.confirm(
+    SystemUpgrade.show(
         context,
-      title: '升级系统',
-      messageWidget: _messageWidget()
-    );
-
+        initValue: 'v1.2.0'
+    ).then((val){
+      print(val);
+    });
 
   }
+
+  _upRecord(){
+
+    DialogWidget.loading(context);
+  }
+
 
 
 }

@@ -265,4 +265,19 @@ class DialogWidget {
     Navigator.of(context).pop();
   }
 
+  static loading(BuildContext context){
+    showDialog(
+        context: context,
+        builder: (_){
+          return Center(
+            child: Text("pppppp"),
+          );
+        },
+        barrierDismissible: false
+    );
+
+  }
+
 }
+
+
