@@ -35,7 +35,7 @@ class ListWidget extends StatefulWidget {
 class _ListWidgetState extends State<ListWidget> {
 
   LoadStatus _loadStatus = LoadStatus.STATUS_IDEL;
-  String _loadText = '空闲状态';
+  String _loadText = '没有更多了';
   ScrollController _scrollController = ScrollController();
 
 
@@ -95,7 +95,9 @@ class _ListWidgetState extends State<ListWidget> {
 
   @override
   void initState() {
+
     _scrollController.addListener((){
+      print("${_scrollController.position.pixels}=======${_scrollController.position.maxScrollExtent}");
       if(_scrollController.position.pixels >
           _scrollController.position.maxScrollExtent - ScreenUtil().setHeight(50)) {
         _getMoreDate();

@@ -5,10 +5,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ListItem extends StatelessWidget {
 
   final String title;
-  final String label;
+  final dynamic label;
   final bool isLast;
+  final Widget labelWidget;
 
-  ListItem({Key key, this.title, this.label, this.isLast = false}):super(key: key);
+  ListItem({
+    Key key,
+    this.title,
+    this.label,
+    this.isLast = false,
+    this.labelWidget
+  }):super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +44,7 @@ class ListItem extends StatelessWidget {
                       ),
                     );
                   }else{
-                    return Container();
+                    return labelWidget;
                   }
                 }()
 

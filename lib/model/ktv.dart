@@ -307,3 +307,91 @@ class Enterprise {
     return data;
   }
 }
+
+// 实施信息
+class Implement {
+  int id;
+  String vodKtvId;
+  String vodVersion;
+  String implementBoxCount;
+  String brand;
+  String createDate;
+  String updateDate;
+  int ktv;
+  String acronym;
+
+  Implement(
+      {this.id,
+        this.vodKtvId,
+        this.vodVersion,
+        this.implementBoxCount,
+        this.brand,
+        this.createDate,
+        this.updateDate,
+        this.ktv,
+        this.acronym});
+
+  Implement.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    vodKtvId = json['vod_ktv_id'];
+    vodVersion = json['vod_version'];
+    implementBoxCount = json['implement_box_count'].toString();
+    brand = json['brand'];
+    createDate = json['create_date'];
+    updateDate = json['update_date'];
+    ktv = json['ktv'];
+    acronym = json['acronym'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['vod_ktv_id'] = this.vodKtvId;
+    data['vod_version'] = this.vodVersion;
+    data['implement_box_count'] = this.implementBoxCount;
+    data['brand'] = this.brand;
+    data['create_date'] = this.createDate;
+    data['update_date'] = this.updateDate;
+    data['ktv'] = this.ktv;
+    data['acronym'] = this.acronym;
+    return data;
+  }
+}
+
+// vod升级记录
+class VodUpgradeRecord {
+  String originalVersion;
+  int id;
+  String newVersion;
+  int vodKtv;
+  String createDate;
+  String updateDate;
+
+  VodUpgradeRecord(
+      {this.originalVersion,
+        this.id,
+        this.newVersion,
+        this.vodKtv,
+        this.createDate,
+        this.updateDate});
+
+  VodUpgradeRecord.fromJson(Map<String, dynamic> json) {
+    originalVersion = json['original_version'];
+    id = json['id'];
+    newVersion = json['new_version'];
+    vodKtv = json['vod_ktv'];
+    createDate = json['create_date'];
+    updateDate = json['update_date'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['original_version'] = this.originalVersion;
+    data['id'] = this.id;
+    data['new_version'] = this.newVersion;
+    data['vod_ktv'] = this.vodKtv;
+    data['create_date'] = this.createDate;
+    data['update_date'] = this.updateDate;
+    return data;
+  }
+}

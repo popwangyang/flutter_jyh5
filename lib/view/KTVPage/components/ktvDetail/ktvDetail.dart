@@ -22,6 +22,8 @@ import 'dart:convert';
 import 'components/enterpriseInfo/index.dart';
 // 实施信息
 import 'components/implementInfo/index.dart';
+// 签约信息
+import 'components/contractInfo/index.dart';
 
 
 class KtvDetail extends StatefulWidget {
@@ -336,6 +338,15 @@ class _KtvDetailState extends State<KtvDetail> {
         Navigator.push(context, MaterialPageRoute(
             builder: (_){
               return  ImplementPage(
+                ktvID: ktvDetailModel.id,
+              );
+            }
+        ));
+        break;
+      case 2:
+        Navigator.push(context, MaterialPageRoute(
+            builder: (_){
+              return  ContractPage(
                 ktvID: ktvDetailModel.id,
               );
             }

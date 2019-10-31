@@ -78,6 +78,16 @@ Future<Response> putEnterprise(id, data, context){
   );
 }
 
+// 实施信息记录
+Future<Response> getImplementList(params, context){
+  return ajax.request(
+      context,
+      '/copyright/ktv/implement',
+      queryParameters: params,
+      options: Options(method: 'get')
+  );
+}
+
 // 实施信息获取
 Future<Response> getImplement(id, context){
   return ajax.request(
@@ -106,3 +116,35 @@ Future<Response> getVodList(data, context){
       options: Options(method: 'get')
   );
 }
+
+// 【KTV】vod升级
+Future<Response> upgradeVod(data, context){
+  return ajax.request(
+      context,
+      '/copyright/ktv/vod-upgrade',
+      data: data,
+      options: Options(method: 'post')
+  );
+}
+
+//【KTV】vod升级记录
+Future<Response> upgradeRecord(params, context){
+  return  ajax.request(
+      context,
+      '/copyright/ktv/vod-upgrade',
+      queryParameters: params,
+      options: Options(method: 'get')
+  );
+}
+
+// 【KTV】签约信息列表
+Future<Response> getContract(params, context){
+  return ajax.request(
+      context,
+      '/copyright/ktv/contract',
+      queryParameters: params,
+      options: Options(method: 'get')
+  );
+}
+
+

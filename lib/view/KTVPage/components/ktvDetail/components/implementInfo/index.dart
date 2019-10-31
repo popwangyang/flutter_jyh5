@@ -9,6 +9,7 @@ import 'package:jy_h5/common/components/PageContent.dart';
 import 'package:jy_h5/common/components/Empty.dart';
 import 'package:jy_h5/common/components/Button.dart';
 import 'package:jy_h5/api/ktv.api.dart';
+import 'package:jy_h5/model/ktv.dart';
 
 import 'package:provider/provider.dart';
 import 'package:jy_h5/store/model/ktvModel.dart';
@@ -30,7 +31,7 @@ class _ImplementPageState extends State<ImplementPage> {
   @override
   Widget build(BuildContext context) {
     ktv = Provider.of<Ktv>(context);
-
+    init();
     return Scaffold(
       body: Column(
         children: <Widget>[
@@ -54,6 +55,7 @@ class _ImplementPageState extends State<ImplementPage> {
 
   int pageStatues = 1;
   Ktv ktv;
+  Implement _implementDetail;  // 实施信息
 
   Widget _emptyWidget(){
     return Container(
@@ -70,10 +72,6 @@ class _ImplementPageState extends State<ImplementPage> {
             child:  ButtonCircle(
               text: '新建实施信息',
               onClick: () async{
-                var sendData = {
-                  'state': 1
-                };
-                await ktv.getVod(sendData, context);
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (_){
@@ -91,15 +89,25 @@ class _ImplementPageState extends State<ImplementPage> {
 
   Widget _content(){
     return Container(
-      child: ImplementDetail(),
+      child: ImplementDetail(
+        implement: _implementDetail,
+        ktvID: widget.ktvID,
+      ),
     );
   }
 
   @override
-  void initState() {
+  void initState(){
     // TODO: implement initState
     getData();
     super.initState();
+  }
+
+  init() async{
+    var sendData = {
+      'state': 1
+    };
+    await ktv.getVod(sendData, context);
   }
 
   getData() async{
@@ -112,6 +120,7 @@ class _ImplementPageState extends State<ImplementPage> {
       print(result);
       if(result.length > 0){
         pageStatues = 2;
+        _implementDetail = Implement.fromJson(result[0]);
       }else{
         pageStatues = 4;
       }

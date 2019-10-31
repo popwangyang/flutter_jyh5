@@ -55,7 +55,7 @@ class AnimatedInput extends AnimatedWidget{
         color: Colors.transparent,
         child: Container(
           width: ScreenUtil().setWidth(280),
-          height: ScreenUtil().setHeight(170),
+          height: ScreenUtil().setHeight(180),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: Colors.white
