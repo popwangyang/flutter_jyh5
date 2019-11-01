@@ -10,7 +10,7 @@ import '../../libs/utils.dart';
 
 class Login with ChangeNotifier {
   User _user;
-  List  companyBrands;
+  List  companyBrands = [];
 
   User get user => _user;
 

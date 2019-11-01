@@ -14,7 +14,7 @@ class ListItem extends StatelessWidget {
     this.title,
     this.label,
     this.isLast = false,
-    this.labelWidget
+    this.labelWidget,
   }):super(key: key);
 
   @override
@@ -47,7 +47,6 @@ class ListItem extends StatelessWidget {
                     return labelWidget;
                   }
                 }()
-
               ],
             ),
           ),

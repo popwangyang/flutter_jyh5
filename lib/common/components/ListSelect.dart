@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:jy_h5/common/components/ListPicker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../style.dart';
+import '../ValueNotifier.dart';
 
 class ListSelected extends StatefulWidget {
   final bool isRequired;
@@ -12,6 +13,7 @@ class ListSelected extends StatefulWidget {
   final bool isLast;
   final String title;
   final Function btn;
+  final ValueNotifierData vn;
 
   ListSelected({
     Key key,
@@ -21,7 +23,8 @@ class ListSelected extends StatefulWidget {
     this.initValue,
     this.title,
     this.isLast = false,
-    this.btn
+    this.btn,
+    this.vn
   }):super(key: key);
 
   @override
@@ -33,6 +36,7 @@ class _ListSelectedState extends State<ListSelected>{
   double customerItemExtent = 40;
   String _value;
   int _position;
+  int _lastPosition;
 
   FixedExtentScrollController scrollController;
 
@@ -141,17 +145,37 @@ class _ListSelectedState extends State<ListSelected>{
 
 
   _onSelected(){
-    print(_position);
+    if(_lastPosition == null || _lastPosition != _position){
+      _lastPosition = _position;
+      setState(() {
+        _value = widget.data[_position];
+      });
+      widget.onChange(_position);
+    }
+  }
+
+  void _reset(){
     setState(() {
-      _value = widget.data[_position];
+      _value = null;
     });
-    widget.onChange(_position);
+    widget.vn.value = '0';
   }
 
   @override
   void initState() {
-    _value = widget.initValue;
     super.initState();
+    _value = widget.initValue;
+    if(widget.vn != null){
+      widget.vn.addListener(_reset);
+    }
+  }
+
+  @override
+  void dispose() {
+    if(widget.vn != null){
+      widget.vn.removeListener(_reset);
+    }
+    super.dispose();
   }
 
 }

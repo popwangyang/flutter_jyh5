@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jy_h5/common/components/ListItem.dart';
 import 'package:jy_h5/api/merchant.api.dart';
 import 'package:jy_h5/common/components/PageContent.dart';
-import 'package:jy_h5/common/style.dart';
 import 'package:jy_h5/common/components/Strip.dart';
 import 'edited.dart';
 import 'dart:convert';
@@ -124,7 +123,7 @@ class _MerchantDetailState extends State<MerchantDetail> {
                 ),
                 ),
               ),
-              onTap: () {
+              onTap: (){
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) {
                       return MerchantEdited(
@@ -179,6 +178,7 @@ class _MerchantDetailState extends State<MerchantDetail> {
                 index++;
                 return ListItem(
                   title: '${item.name}',
+                  labelWidget: Container(),
                   isLast: index == merchantDetailModel.ktvList.length,
                 );
               }).toList(),
@@ -204,7 +204,7 @@ class _MerchantDetailState extends State<MerchantDetail> {
       var result = await getMerchantDetail(widget.merchant.id, context);
       print(result);
       merchantDetailModel = MerchantDetailModel.fromJson(json.decode(result.toString()));
-      print("${merchantDetailModel.merchantID}");
+      print("${merchantDetailModel.ktvList}");
       setState(() {
         pageStatues = 2;
       });

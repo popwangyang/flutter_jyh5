@@ -128,11 +128,10 @@ class _KtvEditedState extends State<KtvEdited> {
             title: '营业时间',
             value: fromData['business_hours'],
             onBtn: () async{
-              print("btn");
               var result = await Navigator.push(context, MaterialPageRoute(
                   builder: (_){
                     return KtvTime(
-                      businessHours: widget.ktv.businessHours,
+                      businessHours: fromData['business_hours'],
                     );
                   }
               ));

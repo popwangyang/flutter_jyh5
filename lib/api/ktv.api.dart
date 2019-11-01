@@ -147,4 +147,34 @@ Future<Response> getContract(params, context){
   );
 }
 
+// 【KTV】新增签约信息
+Future<Response> addContract(data, context){
+  return ajax.request(
+      context,
+      '/copyright/ktv/contract',
+      data: data,
+      options: Options(method: 'post')
+  );
+}
+
+// 【KTV】签约信息修改
+Future<Response> putContract(id, data, context){
+  return ajax.request(
+      context,
+      '/copyright/ktv/contract/$id',
+      data: data,
+      options: Options(method: 'put')
+  );
+}
+
+// 【KTV】充值套餐列表
+Future<Response> getRechargeList(params, context){
+  return ajax.request(
+      context,
+      '/copyright/ktv/recharge-package',
+      queryParameters: params,
+      options: Options(method: 'get')
+  );
+}
+
 

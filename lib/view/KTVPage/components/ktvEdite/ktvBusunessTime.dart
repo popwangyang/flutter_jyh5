@@ -159,6 +159,7 @@ class _KtvTimeState extends State<KtvTime> {
     for(var i = 0; i < widget.businessHours.days.length; i++){
       weekList[widget.businessHours.days[i]]['value'] = true;
     }
+    weekList[0]['value'] = widget.businessHours.days.length == 7 ? true:false;
     super.initState();
   }
 

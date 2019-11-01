@@ -11,6 +11,9 @@ import 'package:jy_h5/common/components/ListItem.dart';
 import 'package:jy_h5/model/ktv.dart';
 import 'package:jy_h5/common/style.dart';
 import 'package:jy_h5/common/components/ListPicker.dart';
+import 'package:toast/toast.dart';
+import 'contract_edited.dart';
+import 'supplement_contract.dart';
 
 
 class ContractPage extends StatefulWidget {
@@ -69,8 +72,20 @@ class _ContractPageState extends State<ContractPage> {
                        SizedBox(
                          width: 20,
                        ),
-                       _buttonWidget('编辑', (){
-
+                       _buttonWidget('编辑', () async{
+                         var result = await Navigator.of(context).push(
+                           MaterialPageRoute(
+                             builder: (_){
+                               return ContractEdited(
+                                 ktvID: widget.ktvID,
+                                 contractDetail: contractDetail,
+                               );
+                             }
+                           )
+                         );
+                         if(result != null){
+                           getData();
+                         }
                        }),
                      ],
                    ),
@@ -105,7 +120,7 @@ class _ContractPageState extends State<ContractPage> {
           ListItem(
             isLast: true,
             title: '包厢数量',
-            label: contractDetail.initBoxCount,
+            label: contractDetail.boxCount,
           ),
           Container(
             margin: EdgeInsets.symmetric(
@@ -123,7 +138,7 @@ class _ContractPageState extends State<ContractPage> {
           ),
           ListItem(
             title: '到账状态',
-            label: contractDetail.state == '1' ? '未到账':'已到账',
+            label: contractDetail.state == 1 ? '未到账':'已到账',
           ),
           Container(
             margin: EdgeInsets.symmetric(
@@ -153,8 +168,19 @@ class _ContractPageState extends State<ContractPage> {
             ),
             child:  ButtonCircle(
               text: '新建签约信息',
-              onClick: (){
-
+              onClick: () async{
+                var result = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_){
+                      return ContractEdited(
+                        ktvID: widget.ktvID,
+                      );
+                    }
+                  )
+                );
+                if(result != null){
+                  getData();
+                }
               },
             ),
           ),
@@ -332,6 +358,9 @@ class _ContractPageState extends State<ContractPage> {
   int pageStatues = 1;
 
   getData() async{
+    setState(() {
+      pageStatues = 1;
+    });
     var sendData = {
       'ktv': widget.ktvID,
       'state': 1
@@ -339,6 +368,7 @@ class _ContractPageState extends State<ContractPage> {
     try{
       var res = await getContract(sendData, context);
       var data = json.decode(res.toString())['results'];
+      print(data);
       if(data.length > 0){
         pageStatues = 2;
         contractDetail = ContractDetail.fromJson(data[0]);
@@ -348,24 +378,68 @@ class _ContractPageState extends State<ContractPage> {
       }
       setState(() {});
     }catch(err){
+      print(err);
       setState(() {
         pageStatues = 3;
       });
     }
   }
 
-  _moreBtn() async{
+  _moreBtn(){
     ListPicker.pickerList(
         context,
       child: _moreWidget(),
       height: ScreenUtil().setHeight(235)
     );
   }
-  _addContract(){
 
+  Future _pop(){
+    Navigator.pop(context);
+    return Future.delayed(Duration(milliseconds: 200));
   }
-  _supplementContract(){
 
+  _addContract() async{
+    await _pop();
+    if(contractDetail.state == 1){
+      Toast.show(
+          '请先终止当前合同',
+          context,
+          duration: 2,
+          gravity: 1
+      );
+      return;
+    }
+   var result =  await Navigator.of(context).push(MaterialPageRoute(
+        builder: (_){
+          return ContractEdited(
+            ktvID: widget.ktvID,
+          );
+        }
+    ));
+    if(result != null){
+      getData();
+    }
+  }
+  _supplementContract() async{
+    await _pop();
+    if(contractDetail.chargeManage.state == 2){
+      Toast.show(
+          '合同为未到账状态, 无法补充合同',
+          context,
+          duration: 2,
+          gravity: 1
+      );
+      return;
+    }
+    Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (_){
+              return SupplementContract(
+                ktvID: widget.ktvID,
+              );
+            }
+        )
+    );
   }
   _lookPastContract(){
 
