@@ -24,6 +24,8 @@ import 'components/enterpriseInfo/index.dart';
 import 'components/implementInfo/index.dart';
 // 签约信息
 import 'components/contractInfo/index.dart';
+// 账号信息
+import 'components/accountInfo/index.dart';
 
 
 class KtvDetail extends StatefulWidget {
@@ -352,6 +354,17 @@ class _KtvDetailState extends State<KtvDetail> {
             }
         ));
         break;
+      case 3:
+        Navigator.push(context, MaterialPageRoute(
+            builder: (_){
+              return  AccountPage(
+                ktvID: ktvDetailModel.id,
+                balance: ktvDetailModel.balance,
+                accountStatus: ktvDetailModel.accountStatus,
+              );
+            }
+        ));
+        break;
     }
   }
 
@@ -377,6 +390,7 @@ class _KtvDetailState extends State<KtvDetail> {
         pageStatues = 2;
       });
     }catch(err){
+      print(err);
       setState(() {
         pageStatues = 3;
       });

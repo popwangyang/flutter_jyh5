@@ -60,7 +60,7 @@ class KtvDetailModel {
   String cityCode;
   String countyCode;
   int accountStatus;
-  Null chargeableTime;
+  String chargeableTime;
   String merchantName;
   int implementState;
   int owenBoxCount;

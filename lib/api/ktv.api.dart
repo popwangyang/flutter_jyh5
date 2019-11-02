@@ -167,6 +167,16 @@ Future<Response> putContract(id, data, context){
   );
 }
 
+// 【KTV】终止合同
+Future<Response> stopContract(id,data, context){
+  return ajax.request(
+      context,
+      '/copyright/ktv/contract/$id',
+      data: data,
+      options: Options(method: 'patch')
+  );
+}
+
 // 【KTV】充值套餐列表
 Future<Response> getRechargeList(params, context){
   return ajax.request(
@@ -176,5 +186,27 @@ Future<Response> getRechargeList(params, context){
       options: Options(method: 'get')
   );
 }
+
+// 【KTV】补充合同
+Future<Response> addSupplementContract(data, context){
+  return ajax.request(
+      context,
+      '/copyright/ktv/accessory',
+      queryParameters: data,
+      options: Options(method: 'post')
+  );
+}
+
+// 【ktv】账户信息
+Future<Response> getAccountInfo(params, context){
+  return ajax.request(
+      context,
+      '/copyright/rbac/user',
+      queryParameters: params,
+      options: Options(method: 'get')
+  );
+}
+
+
 
 

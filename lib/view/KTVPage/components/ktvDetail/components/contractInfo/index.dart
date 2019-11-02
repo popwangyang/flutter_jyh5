@@ -14,6 +14,7 @@ import 'package:jy_h5/common/components/ListPicker.dart';
 import 'package:toast/toast.dart';
 import 'contract_edited.dart';
 import 'supplement_contract.dart';
+import 'contract._past.dart';
 
 
 class ContractPage extends StatefulWidget {
@@ -435,18 +436,46 @@ class _ContractPageState extends State<ContractPage> {
         MaterialPageRoute(
             builder: (_){
               return SupplementContract(
+                contractID: contractDetail.id,
+              );
+            }
+        )
+    );
+  }
+  _lookPastContract() async{
+    await _pop();
+    Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (_){
+              return PastContract(
                 ktvID: widget.ktvID,
               );
             }
         )
     );
   }
-  _lookPastContract(){
 
+  _stopContract() async{
+    await _pop();
+    try{
+      var sendData = {
+        'state': '3'
+      };
+      DateTime dateTime = DateTime.now();
+      if(dateTime.weekday != 1){
+        Toast.show('请在周一进行该操作', context, duration: 1, gravity: 1);
+        return;
+      }
+      await stopContract(contractDetail.id, sendData, context);
+      setState(() {
+        contractDetail.state = 3;
+      });
+      Toast.show('合同已终止', context, duration: 1, gravity: 1);
+    }catch(err){
+      print(err);
+    }
   }
-  _stopContract(){
 
-  }
   @override
   void initState() {
     getData();

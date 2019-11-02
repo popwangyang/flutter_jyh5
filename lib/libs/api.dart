@@ -43,7 +43,7 @@ class HttpRequest {
       print("错误之前");
       // Do something with response error
       int stateCode = e.response.statusCode;
-      print(e.response.data['message']);
+      print(e.response.data);
       if(stateCode == 401){  // 无权限返回登录页面；
       Login login = Provider.of<Login>(context);
           login.logOut().then((e){
