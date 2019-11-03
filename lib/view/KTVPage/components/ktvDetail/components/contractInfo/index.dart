@@ -11,6 +11,8 @@ import 'package:jy_h5/common/components/ListItem.dart';
 import 'package:jy_h5/model/ktv.dart';
 import 'package:jy_h5/common/style.dart';
 import 'package:jy_h5/common/components/ListPicker.dart';
+import 'package:provider/provider.dart';
+import 'package:jy_h5/store/model/ktvModel.dart';
 import 'package:toast/toast.dart';
 import 'contract_edited.dart';
 import 'supplement_contract.dart';
@@ -127,10 +129,25 @@ class _ContractPageState extends State<ContractPage> {
             margin: EdgeInsets.symmetric(
                 vertical: ScreenUtil().setHeight(10)
             ),
-            child: ListItem(
-              title: '合同起始日期',
-              label: contractDetail.beginDate,
-              isLast: true,
+            child: Column(
+              children: <Widget>[
+                ListItem(
+                  title: '合同起始日期',
+                  label: contractDetail.beginDate,
+                  isLast: Provider.of<Ktv>(context).chargeableTime != null ? false:true,
+                ),
+                (){
+                  if(Provider.of<Ktv>(context).chargeableTime != null){
+                    return  ListItem(
+                      title: '结算起始日期',
+                      label: Provider.of<Ktv>(context).chargeableTime,
+                      isLast: true,
+                    );
+                  }else{
+                    return Container();
+                  }
+                }()
+              ],
             ),
           ),
           ListItem(
@@ -191,7 +208,15 @@ class _ContractPageState extends State<ContractPage> {
                 color: Color(0xff4479ef)
             ),),
             onTap: (){
-              print("ppppp");
+              Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (_){
+                        return PastContract(
+                          ktvID: widget.ktvID,
+                        );
+                      }
+                  )
+              );
             },
           )
         ],

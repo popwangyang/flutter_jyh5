@@ -9,6 +9,11 @@ import 'package:jy_h5/common/components/Button.dart';
 import 'package:jy_h5/model/account.dart';
 import 'package:jy_h5/common/components/ListItem.dart';
 import 'package:jy_h5/common/components/ToastWidget.dart';
+import 'package:jy_h5/common/components/Dialog.dart';
+import 'package:jy_h5/view/KTVPage/components/ktvDetail/components/accountInfo/edited_account.dart';
+import 'package:jy_h5/view/KTVPage/components/ktvDetail/components/accountInfo/enable_account.dart';
+import 'package:provider/provider.dart';
+import 'package:jy_h5/store/model/ktvModel.dart';
 
 class AccountPage extends StatefulWidget {
 
@@ -16,12 +21,10 @@ class AccountPage extends StatefulWidget {
     Key key,
     this.ktvID,
     this.balance,
-    this.accountStatus
   }):super(key: key);
 
   final int ktvID;
   final String balance;  // ktv账户余额
-  final int accountStatus; // 账户状态
 
   @override
   _AccountPageState createState() => _AccountPageState();
@@ -61,6 +64,8 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   int pageStatues = 1;
+  String enableText = '启用账号后, 将可以登录，确定启用吗？';
+  String prohibitText = '禁用账号后，将无法登录，确定禁用吗？';
 
   AccountDetail accountDetail;
 
@@ -101,7 +106,7 @@ class _AccountPageState extends State<AccountPage> {
           ),
           ListItem(
             title: '性质',
-            label: widget.accountStatus == 1 ? '试用账号':'正式账号',
+            label: Provider.of<Ktv>(context).accountStatus == 1 ? '试用账号':'正式账号',
             isLast: true,
           )
         ],
@@ -123,7 +128,16 @@ class _AccountPageState extends State<AccountPage> {
             ),
             child:  ButtonCircle(
               text: '新建试用账号',
-              onClick: () async{},
+              onClick: () async{
+                var result = Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_){
+                    return EditedAccountPage();
+                  }
+                ));
+                if(result != null){
+                  getData();
+                }
+              },
             ),
           )
         ],
@@ -161,10 +175,18 @@ class _AccountPageState extends State<AccountPage> {
                       )
                     )
                   ),
-                  child: Text("禁用账号",)
+                  child: Text(accountDetail.isActive ? "禁用账号":"启用账号",)
               ),
               onPressed: (){
-
+                DialogWidget.confirm(
+                    context,
+                    message: accountDetail.isActive ? prohibitText:enableText,
+                    title: accountDetail.isActive ? '禁用账号':'启用账号'
+                ).then((val){
+                  if(val == 'ok'){
+                    _accountStatues(accountDetail.isActive);
+                  }
+                });
               },
             ),
           ),
@@ -177,7 +199,18 @@ class _AccountPageState extends State<AccountPage> {
                   child: Text("正式启用",)
               ),
               onPressed: (){
-                ToastWidget.clear();
+                int statue = Provider.of<Ktv>(context).accountStatus;
+                if(statue == 2){
+                  ToastWidget(context, '当前账号为正式账号，不可进行该操作');
+                  return;
+                }
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_){
+                    return EnablePage(
+                      ktvId: widget.ktvID,
+                    );
+                  }
+                ));
               },
             ),
           ),
@@ -193,14 +226,44 @@ class _AccountPageState extends State<AccountPage> {
                   alignment: Alignment.center,
                   child: Text("编辑",)
               ),
-              onPressed: (){
-                ToastWidget.loading(context, message: '加载中...', duration: 2);
+              onPressed: () async{
+                var result = await Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_){
+                      return EditedAccountPage(
+                        accountDetail: accountDetail,
+                      );
+                    }
+                ));
+                if(result != null){
+                  getData();
+                }
               },
             ),
           ),
         ],
       ),
     );
+  }
+
+  _accountStatues(bool state) async{
+    ToastWidget.loading(
+        context, message: state ? '启用中':'禁用中',
+        duration: 2
+    );
+    var sendData = {
+      'area_code_list': accountDetail.areaCodeList,
+      'is_active': state ? 0 : 1
+    };
+
+    try{
+      await changAccountStatues(accountDetail.id, sendData, context);
+      ToastWidget.success(context, message: '启用成功');
+      setState(() {
+        accountDetail.isActive = !state;
+      });
+    }catch(err){
+      ToastWidget.fail(context, message: '操作失败');
+    }
   }
 
   getData() async{
@@ -214,16 +277,16 @@ class _AccountPageState extends State<AccountPage> {
       };
       var res = await getAccountInfo(sendData, context);
       var result = json.decode(res.toString())['results'];
+      print(result);
       if(result.length > 0){
         pageStatues = 2;
         accountDetail = AccountDetail.fromJson(result[0]);
       }else{
         pageStatues = 4;
       }
-      setState(() {
-        pageStatues = 2;
-      });
+      setState(() {});
     }catch(err){
+      print(err);
       setState(() {
         pageStatues = 3;
       });

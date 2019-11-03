@@ -6,7 +6,8 @@ enum ruleType{
   Phone,
   Array,
   IDCard,
-  Number
+  Number,
+  Password
 }
 
 class Rule {
@@ -49,6 +50,11 @@ class Rule {
               break;
             case ruleType.Number:
               RegExp regExp = new RegExp(r"^[0-9]*[1-9][0-9]*$");
+              result = regExp.hasMatch(data);
+              print(result);
+              break;
+            case ruleType.Password:
+              RegExp regExp = new RegExp(r"^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$");
               result = regExp.hasMatch(data);
               print(result);
               break;

@@ -15,28 +15,44 @@ class Ktv with ChangeNotifier{
 
   List get vodList => _vodList;
 
+  int _accountStatus;
+
+  int get accountStatus => _accountStatus;
+
+  String _chargeableTime;
+
+  String get chargeableTime => _chargeableTime;
+
+
+  void setChargeableTime(String date){
+    _chargeableTime = date;
+  }
+
   void setKtvID(int id){
     _ktvID = id;
+  }
+
+  void setAccountStatus(int status){
+    _accountStatus = status;
+    notifyListeners();
   }
 
   Future getVod(params, context) async{
     Completer completer = new Completer();
 
     try{
-     var res =  await getVodList(params, context);
-     var data = json.decode(res.toString())['results'];
-     _vodList = data.map((item){
-       return VODProvider.fromJson(item);
-     }).toList();
-     print(_vodList);
-     completer.complete(true);
+      var res =  await getVodList(params, context);
+      var data = json.decode(res.toString())['results'];
+      _vodList = data.map((item){
+        return VODProvider.fromJson(item);
+      }).toList();
+      print(_vodList);
+      completer.complete(true);
     }catch(err){
       print(err);
-     completer.complete(err);
+      completer.complete(err);
     }
     return completer.future;
   }
-
-
 
 }

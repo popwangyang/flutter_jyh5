@@ -9,7 +9,8 @@ class DialogWidget {
   static Future alert(BuildContext context, {
     String title = "",
     String message = "弹框内容",
-    bool barrierDismissible = false
+    bool barrierDismissible = false,
+    int duration = 160
   }){
     Completer completer = Completer();
     if(!flag){
@@ -20,7 +21,7 @@ class DialogWidget {
         barrierLabel: "你好",
         barrierDismissible: barrierDismissible,
         barrierColor: Colors.black.withOpacity(0.7),
-        transitionDuration: Duration(milliseconds: 160),
+        transitionDuration: Duration(milliseconds: duration),
         pageBuilder: (BuildContext context, Animation animation,
             Animation secondaryAnimation) {
           return Center(
@@ -83,7 +84,9 @@ class DialogWidget {
                       ),
                       onPressed: (){
                         Navigator.of(context).pop();
-
+                        Future.delayed(Duration(milliseconds: duration),(){
+                          completer.complete('ok');
+                        });
                       },
                     )
                   ],
@@ -118,7 +121,8 @@ class DialogWidget {
     String title = '',
     String message = "弹框内容",
     Widget messageWidget,
-    bool barrierDismissible = true
+    bool barrierDismissible = true,
+    int duration = 160
   }){
     Completer completer = Completer();
     if(!flag){
@@ -128,7 +132,7 @@ class DialogWidget {
         barrierLabel: "你好",
         barrierDismissible: barrierDismissible,
         barrierColor: Colors.black.withOpacity(0.7),
-        transitionDuration: Duration(milliseconds: 160),
+        transitionDuration: Duration(milliseconds: duration),
         pageBuilder: (BuildContext context, Animation animation,
             Animation secondaryAnimation) {
           return Center(
@@ -209,7 +213,9 @@ class DialogWidget {
                             ),
                             onPressed: (){
                               Navigator.of(context).pop();
-                              completer.complete('cancel');
+                              Future.delayed(Duration(milliseconds: duration),(){
+                                completer.complete('cancel');
+                              });
                             },
                           ),
                         ),
@@ -224,9 +230,11 @@ class DialogWidget {
                                   color: Color.fromRGBO(25, 137, 250, 1)
                               ),),
                             ),
-                            onPressed: (){
+                            onPressed: () async{
                               Navigator.of(context).pop();
-                              completer.complete('ok');
+                              Future.delayed(Duration(milliseconds: duration),(){
+                                completer.complete('ok');
+                              });
                             },
                           ),
                         )
@@ -281,7 +289,8 @@ class DialogWidget {
 }
 
 class LoadingDialog extends Dialog {
-  String text;
+
+  final String text;
 
   LoadingDialog({Key key, @required this.text}) : super(key: key);
 

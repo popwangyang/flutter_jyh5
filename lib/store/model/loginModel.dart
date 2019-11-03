@@ -10,7 +10,7 @@ import '../../libs/utils.dart';
 
 class Login with ChangeNotifier {
   User _user;
-  List  companyBrands = [];
+  List  companyBrands;
 
   User get user => _user;
 
@@ -61,6 +61,7 @@ class Login with ChangeNotifier {
   }
 
   Future getLoginInfo(BuildContext context) async{
+    print(companyBrands);
     if(companyBrands == null){
       var result = await getCompanyBrandList(null, context);  // 登录获取品牌列表
       var data = json.decode(result.toString())['results'];

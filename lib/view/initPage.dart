@@ -46,6 +46,7 @@ class _InitPageState extends State<InitPage> with TickerProviderStateMixin{
   void goPage() async{
     Login _login = Provider.of<Login>(context);
     await _login.initUser();
+    await _login.getLoginInfo(context);
 
     if(_login.user == null || !_login.user.autoLogin){
       Navigator.of(context).push(

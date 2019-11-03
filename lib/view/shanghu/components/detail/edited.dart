@@ -189,7 +189,9 @@ class _MerchantEditedState extends State<MerchantEdited> {
           Switch(
             value: fromData['accountStatues'],
             onChanged: (value){
-              fromData['accountStatues'] = value;
+              setState(() {
+                fromData['accountStatues'] = value;
+              });
             },
           )
         ],

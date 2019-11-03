@@ -207,6 +207,46 @@ Future<Response> getAccountInfo(params, context){
   );
 }
 
+// 【ktv】修改账户状态
+Future<Response> changAccountStatues(id, data, context){
+  return ajax.request(
+      context,
+      '/copyright/rbac/user/$id',
+      data: data,
+      options: Options(method: 'patch')
+  );
+}
+
+// 【ktv】启用账号
+Future<Response> enableAccount(id, data, context){
+  return ajax.request(
+      context,
+      '/copyright/ktv/ktv-place/$id',
+      data: data,
+      options: Options(method: 'put')
+  );
+}
+
+// 【ktv】创建账号
+Future<Response> createAccountKTV(data, context){
+  return ajax.request(
+      context,
+      '/copyright/rbac/user',
+      data: data,
+      options: Options(method: 'post')
+  );
+}
+
+// 【ktv】修改账号
+Future<Response> putAccountKTV(id, data, context){
+  return ajax.request(
+      context,
+      '/copyright/rbac/user/$id',
+      data: data,
+      options: Options(method: 'put')
+  );
+}
+
 
 
 

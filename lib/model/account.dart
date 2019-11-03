@@ -1,6 +1,7 @@
 
 class AccountDetail {
   int id;
+  List areaCodeList;
   String code;
   String nickname;
   String username;
@@ -39,6 +40,7 @@ class AccountDetail {
         this.merchantId,
         this.rightId,
         this.lastLoginDate,
+        this.areaCodeList,
         this.createDate,
         this.updateDate,
         this.codeShow});
@@ -46,6 +48,7 @@ class AccountDetail {
   AccountDetail.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     code = json['code'];
+    areaCodeList = json['area_code_list'];
     nickname = json['nickname'];
     username = json['username'];
     email = json['email'];
@@ -90,6 +93,7 @@ class AccountDetail {
     data['create_date'] = this.createDate;
     data['update_date'] = this.updateDate;
     data['code_show'] = this.codeShow;
+    data['area_code_list'] = this.areaCodeList;
     return data;
   }
 }

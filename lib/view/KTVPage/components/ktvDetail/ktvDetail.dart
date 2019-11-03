@@ -70,13 +70,15 @@ class _KtvDetailState extends State<KtvDetail> {
   ];
 
   KtvDetailModel ktvDetailModel;
+  Ktv ktv;
 
 
   @override
   Widget build(BuildContext context) {
 
-    Ktv ktv = Provider.of<Ktv>(context);
+    ktv = Provider.of<Ktv>(context);
     ktv.setKtvID(widget.ktv.id);
+
 
     return Scaffold(
       body: Container(
@@ -346,6 +348,9 @@ class _KtvDetailState extends State<KtvDetail> {
         ));
         break;
       case 2:
+        if(ktvDetailModel.chargeableTime != null){
+          Provider.of<Ktv>(context).setChargeableTime(ktvDetailModel.chargeableTime);
+        }
         Navigator.push(context, MaterialPageRoute(
             builder: (_){
               return  ContractPage(
@@ -360,7 +365,6 @@ class _KtvDetailState extends State<KtvDetail> {
               return  AccountPage(
                 ktvID: ktvDetailModel.id,
                 balance: ktvDetailModel.balance,
-                accountStatus: ktvDetailModel.accountStatus,
               );
             }
         ));
@@ -385,7 +389,7 @@ class _KtvDetailState extends State<KtvDetail> {
     try{
       var data = await getKTVDetail(widget.ktv.id, context);
       ktvDetailModel = KtvDetailModel.fromJson(json.decode(data.toString()));
-      print(ktvDetailModel);
+      ktv.setAccountStatus(ktvDetailModel.accountStatus);
       setState(() {
         pageStatues = 2;
       });
