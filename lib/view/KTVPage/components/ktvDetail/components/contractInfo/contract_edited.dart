@@ -15,6 +15,8 @@ import 'package:jy_h5/model/contract.dart';
 import 'dart:convert';
 
 import 'package:jy_h5/model/validate/rule.dart';
+import 'package:provider/provider.dart';
+import 'package:jy_h5/store/model/ktvModel.dart';
 import 'package:toast/toast.dart';
 
 class ContractEdited extends StatefulWidget {
@@ -249,6 +251,7 @@ class _ContractEditedState extends State<ContractEdited> {
           await putContract(widget.contractDetail.id, sendData, context);
           Toast.show('修改成功', context, duration: 1, gravity: 1);
         }
+        Provider.of<Ktv>(context).setBoxCount(fromData['box_count']);
         Navigator.pop(context, true);
       }catch(err){
         print(err);

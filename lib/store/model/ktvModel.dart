@@ -23,6 +23,21 @@ class Ktv with ChangeNotifier{
 
   String get chargeableTime => _chargeableTime;
 
+  int _boxCount;
+
+  int get boxCount => _boxCount;
+
+  String _balance;
+
+  String get balance => _balance;
+
+  void setKtvBalance(String balance){
+    _balance = balance;
+  }
+
+  void setBoxCount(int count){
+    _boxCount = count;
+  }
 
   void setChargeableTime(String date){
     _chargeableTime = date;

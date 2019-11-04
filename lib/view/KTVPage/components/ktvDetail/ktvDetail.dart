@@ -26,6 +26,8 @@ import 'components/implementInfo/index.dart';
 import 'components/contractInfo/index.dart';
 // 账号信息
 import 'components/accountInfo/index.dart';
+// 线下充值
+import 'components/rechargeInfo/index.dart';
 
 
 class KtvDetail extends StatefulWidget {
@@ -369,6 +371,15 @@ class _KtvDetailState extends State<KtvDetail> {
             }
         ));
         break;
+      case 4:
+        Navigator.push(context, MaterialPageRoute(
+            builder: (_){
+              return  RechargePage(
+                boxCount: ktvDetailModel.owenBoxCount,
+              );
+            }
+        ));
+        break;
     }
   }
 
@@ -390,6 +401,8 @@ class _KtvDetailState extends State<KtvDetail> {
       var data = await getKTVDetail(widget.ktv.id, context);
       ktvDetailModel = KtvDetailModel.fromJson(json.decode(data.toString()));
       ktv.setAccountStatus(ktvDetailModel.accountStatus);
+      ktv.setBoxCount(ktvDetailModel.owenBoxCount);
+      ktv.setKtvBalance(ktvDetailModel.balance);
       setState(() {
         pageStatues = 2;
       });
