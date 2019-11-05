@@ -5,18 +5,27 @@ import 'package:jy_h5/common/components/Button.dart';
 import 'package:jy_h5/common/components/ListItem.dart';
 import 'package:jy_h5/common/components/PageContent.dart';
 import 'package:jy_h5/common/ValueNotifier.dart';
+import 'package:jy_h5/common/components/ToastWidget.dart';
+import 'package:jy_h5/model/contract.dart';
 import 'package:jy_h5/model/recharge.dart';
 import 'package:jy_h5/api/ktv.api.dart';
+import 'package:jy_h5/view/KTVPage/components/ktvDetail/components/rechargeInfo/recharge_success.dart';
 import 'dart:convert';
+import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:jy_h5/store/model/ktvModel.dart';
+import 'recharge_record.dart';
 
 
 class RechargePage extends StatefulWidget {
   RechargePage({
     Key key,
-    this.boxCount}):super(key: key);
+    this.boxCount,
+    this.ktvID
+  }):super(key: key);
   final int boxCount;
+  final int ktvID;
+
   @override
   _RechargePageState createState() => _RechargePageState();
 }
@@ -25,7 +34,6 @@ class _RechargePageState extends State<RechargePage> {
   @override
   Widget build(BuildContext context) {
     ktvBalance = Provider.of<Ktv>(context).balance;
-    ktvBoxCount = Provider.of<Ktv>(context).boxCount;
     return Container(
       child: Scaffold(
         body: Column(
@@ -72,10 +80,22 @@ class _RechargePageState extends State<RechargePage> {
                       fontSize: ScreenUtil().setSp(16),
                       color: Colors.white,
                     ),),
-                    Text("充值记录", style: TextStyle(
-                      fontSize: ScreenUtil().setSp(14),
-                      color: Colors.white
-                    ),)
+                    InkWell(
+                      child:  Text("充值记录", style: TextStyle(
+                          fontSize: ScreenUtil().setSp(14),
+                          color: Colors.white
+                      ),),
+                      onTap: (){
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_){
+                            return RechargeRecord(
+                              ktvID: widget.ktvID,
+                            );
+                          }
+                        ));
+                      },
+                    )
+
                   ],
                 ),
                 Expanded(
@@ -111,7 +131,7 @@ class _RechargePageState extends State<RechargePage> {
             ),
           ),
           Container(
-            height: ScreenUtil().setHeight(540),
+            height: ScreenUtil().setHeight(700),
             child: _tabContent(),
           )
         ],
@@ -157,6 +177,7 @@ class _RechargePageState extends State<RechargePage> {
         itemCount: 2,
         onPageChanged: (index){
           vn.value = index.toString();
+          pageChecked(index);
         },
     );
   }
@@ -172,16 +193,34 @@ class _RechargePageState extends State<RechargePage> {
             padding: EdgeInsets.symmetric(
               vertical: ScreenUtil().setHeight(10)
             ),
+            color: Colors.white,
             child: SingleChildScrollView(
               child: Wrap(
                 children: rechargeList1.map((item){
                   return RechargeBox(
                     recharge: item,
+                    checkedID: checkedID,
+                    onChecked: checked,
                   );
                 }).toList(),
               ),
             ),
           ),
+          (){
+            if(null != gifDeviceDescription && gifDeviceDescription != ''){
+              return  Container(
+                margin: EdgeInsets.only(
+                    top: ScreenUtil().setHeight(10)
+                ),
+                child: ListItem1(
+                  title: '说明:',
+                  label: gifDeviceDescription,
+                ),
+              );
+            }else{
+              return Container();
+            }
+          }(),
           Container(
             margin: EdgeInsets.symmetric(
               vertical: ScreenUtil().setHeight(10)
@@ -193,11 +232,11 @@ class _RechargePageState extends State<RechargePage> {
           ),
           ListItem(
             title: '支付金额',
-            label: '0.00元',
+            label: '$rechargeAmount元',
           ),
           ListItem(
             title: '实际到账',
-            label: '0.00元',
+            label: '$actualAmount元',
           ),
           Container(
             alignment: Alignment.centerLeft,
@@ -213,7 +252,7 @@ class _RechargePageState extends State<RechargePage> {
             child: Button(
               text: '提交充值',
               onChange: (e){
-
+                chargeBtn();
               },
             ),
           )
@@ -232,16 +271,34 @@ class _RechargePageState extends State<RechargePage> {
             padding: EdgeInsets.symmetric(
               vertical: ScreenUtil().setHeight(10)
             ),
+            color: Colors.white,
             child: SingleChildScrollView(
               child: Wrap(
                 children: rechargeList2.map((item){
                   return RechargeBox(
                     recharge: item,
+                    checkedID: checkedID,
+                    onChecked: checked,
                   );
                 }).toList(),
               ),
             ),
           ),
+          (){
+            if(null != gifDeviceDescription && gifDeviceDescription != ''){
+              return  Container(
+                margin: EdgeInsets.only(
+                    top: ScreenUtil().setHeight(10)
+                ),
+                child: ListItem1(
+                  title: '说明:',
+                  label: gifDeviceDescription,
+                ),
+              );
+            }else{
+              return Container();
+            }
+          }(),
           Container(
             margin: EdgeInsets.symmetric(
               vertical: ScreenUtil().setHeight(10)
@@ -250,12 +307,12 @@ class _RechargePageState extends State<RechargePage> {
               children: <Widget>[
                 ListItem(
                   title: '支付金额',
-                  label: '2.00元',
+                  label: '$rechargeAmount元',
                 ),
                 ListItem(
                   title: '实际到账',
-                  label: '4.00元',
-                )
+                  label: '$actualAmount元',
+                ),
               ],
             ),
           ),
@@ -266,7 +323,7 @@ class _RechargePageState extends State<RechargePage> {
             child: Button(
               text: '提交充值',
               onChange: (e){
-
+                chargeBtn();
               },
             ),
           )
@@ -283,6 +340,13 @@ class _RechargePageState extends State<RechargePage> {
   List rechargeList2 = [];
   int ktvBoxCount;  // ktv包厢数；
   String ktvBalance; // ktv余额；
+  int checkedID;  // 被选中套餐id；
+  String gifDeviceDescription; // 套餐说明
+  RechargeModel rechargeModel;  // 被选中套餐
+  double rechargeAmount;  // 支付金额
+  double actualAmount;  // 实际到账
+  ContractDetail contractDetail; // ktv签约合同
+
 
   getData() async{
     setState(() {
@@ -294,9 +358,20 @@ class _RechargePageState extends State<RechargePage> {
         'page_size': 100000,
         'initiate_state': 1
       };
+      var params = {
+        'ktv': widget.ktvID,
+        'state': 1
+      };
+      print(params);
       var res = await getRechargeList(sendData, context);
+      var contract = await getContract(params, context);
+      List contractList = json.decode(contract.toString())['results'];
       List result = json.decode(res.toString())['results'];
       pageStatues = 2;
+      if(contractList.length > 0){
+        contractDetail = ContractDetail.fromJson(contractList[0]);
+        ktvBoxCount = contractDetail.boxCount;
+      }
       result.forEach((item){
         RechargeModel rechargeModel = RechargeModel.fromJson(item);
         if(rechargeModel.packageType == 1){
@@ -305,12 +380,80 @@ class _RechargePageState extends State<RechargePage> {
           rechargeList2.add(rechargeModel);
         }
       });
+      if(rechargeList1.length > 0){
+        checkedID = rechargeList1[0].id;
+        checked(rechargeList1[0]);
+      }else if(rechargeList2.length > 0){
+        checkedID = rechargeList2[0].id;
+        checked(rechargeList2[0]);
+      }
       setState(() {});
     }catch(err){
+      print(err);
       setState(() {
         pageStatues = 3;
       });
     }
+  }
+
+  checked(RechargeModel recharge){
+    rechargeModel = recharge;
+    gifDeviceDescription = rechargeModel.giftDeviceDescription;
+    if(rechargeModel.packageType == 1){
+      rechargeAmount = ktvBoxCount*rechargeModel.rechargeAmount;
+      actualAmount = ktvBoxCount*(rechargeModel.rechargeAmount + rechargeModel.presentAmount);
+    }else{
+      rechargeAmount = rechargeModel.rechargeAmount;
+      actualAmount = rechargeModel.rechargeAmount + rechargeModel.presentAmount;
+    }
+    setState(() {
+      checkedID = recharge.id;
+    });
+  }
+
+  pageChecked(int index){
+    if(index == 0){
+      if(rechargeList1.length > 0){
+        setState(() {
+          checkedID = rechargeList1[0].id;
+          checked(rechargeList1[0]);
+        });
+      }
+    }
+    if(index == 1){
+      if(rechargeList2.length > 0){
+        setState(() {
+          checkedID = rechargeList2[0].id;
+          checked(rechargeList2[0]);
+        });
+      }
+    }
+  }
+
+  chargeBtn() async{
+    ToastWidget.loading(context, message: '充值中...', duration: 0);
+    var sendData = {
+      'contract': contractDetail.chargeManage.contract,
+      'ktv': contractDetail.chargeManage.ktv,
+      'package': rechargeModel.id
+    };
+    print(sendData);
+    try{
+      await chargeKtv(sendData, context);
+      ToastWidget.success(context, message: '充值成功');
+      Timer(Duration(milliseconds: 200), (){
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (_){
+            return RechargeSuccess();
+          }
+        ));
+      });
+
+    }catch(err){
+      ToastWidget.fail(context, message: '提交失败');
+    }
+
+
   }
 
   @override
@@ -472,48 +615,58 @@ class RechargeBox extends StatelessWidget {
 
   RechargeBox({
     Key key,
-    this.checked = false,
+    this.checkedID,
     this.recharge,
+    this.onChecked,
   }):super(key: key);
 
-  final bool checked;
+  final int checkedID;
   final RechargeModel recharge;
+  final Function onChecked;
 
   @override
   Widget build(BuildContext context) {
+    bool checked = checkedID == recharge.id ? true:false;
     final Color bgColor = checked ? Color(0xff4479ef):Colors.white;
     final Color textColor = !checked ? Color(0xff4479ef):Colors.white;
     return Stack(
       children: <Widget>[
-        Container(
-          alignment: Alignment.center,
-          width: ScreenUtil().setWidth(105),
-          height: ScreenUtil().setHeight(80),
-          margin: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4.0),
-              border: Border.all(
-                  color: Color(0xff4479ef),
-                  width: 1
-              ),
-              color: bgColor
+        InkWell(
+          highlightColor: Colors.white,
+          splashColor: Colors.white,
+          child: Container(
+            alignment: Alignment.center,
+            width: ScreenUtil().setWidth(105),
+            height: ScreenUtil().setHeight(80),
+            margin: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4.0),
+                border: Border.all(
+                    color: Color(0xff4479ef),
+                    width: 1
+                ),
+                color: bgColor
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text("${recharge.rechargeAmount}元", style: TextStyle(
+                    fontSize: ScreenUtil().setSp(16.0),
+                    fontWeight: FontWeight.w600,
+                    color: textColor
+                ),),
+                Text(recharge.preferentialDetail,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: ScreenUtil().setSp(12),
+                      color: textColor
+                  ),)
+              ],
+            ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text("${recharge.rechargeAmount}元", style: TextStyle(
-                  fontSize: ScreenUtil().setSp(16.0),
-                  fontWeight: FontWeight.w600,
-                  color: textColor
-              ),),
-              Text(recharge.preferentialDetail,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: ScreenUtil().setSp(12),
-                  color: textColor
-              ),)
-            ],
-          ),
+          onTap: (){
+            onChecked(recharge);
+          },
         ),
         (){
            if(recharge.tag != null && recharge.tag != ''){

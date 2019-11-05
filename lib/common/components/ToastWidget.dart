@@ -45,9 +45,15 @@ class ToastWidget{
               ),
             ),
           ),
-          Text(message, style: TextStyle(
-            color: Colors.white
-          ),)
+          (){
+            if(message != null && message != ''){
+              return Text(message, style: TextStyle(
+                  color: Colors.white
+              ),);
+            }else{
+              return Container();
+            }
+          }()
         ],
       ),
     ), duration: duration);

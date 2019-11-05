@@ -308,7 +308,7 @@ class _LoginPageState extends State<LoginPage> {
     login.getLogin(fromData, context).then((val) {
       setState(() {
         loading = false;
-        Navigator.of(context).pushNamed('indexPage');
+        Navigator.of(context).pushReplacementNamed('indexPage');
       });
     }).catchError((err){
       setState(() {

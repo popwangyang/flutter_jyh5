@@ -35,7 +35,7 @@ class AppTitle extends StatelessWidget {
                   );
                 }else{
                   return SizedBox(
-                    width: ScreenUtil.getInstance().setWidth(18),
+                    width: ScreenUtil.getInstance().setWidth(40),
                   );
                 }
               }()
@@ -47,7 +47,7 @@ class AppTitle extends StatelessWidget {
               ),
             ),
             SizedBox(
-              width: ScreenUtil.getInstance().setWidth(18),
+              width: ScreenUtil.getInstance().setWidth(40),
             )
           ],
         ),

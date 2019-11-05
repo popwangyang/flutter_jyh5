@@ -376,6 +376,7 @@ class _KtvDetailState extends State<KtvDetail> {
             builder: (_){
               return  RechargePage(
                 boxCount: ktvDetailModel.owenBoxCount,
+                ktvID: ktvDetailModel.id,
               );
             }
         ));

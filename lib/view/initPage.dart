@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jy_h5/common/components/ToastWidget.dart';
 import 'package:jy_h5/store/model/loginModel.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -44,22 +45,27 @@ class _InitPageState extends State<InitPage> with TickerProviderStateMixin{
   }
 
   void goPage() async{
-    Login _login = Provider.of<Login>(context);
-    await _login.initUser();
-    await _login.getLoginInfo(context);
+
+    try{
+      Login _login = Provider.of<Login>(context);
+      await _login.initUser();
+      await _login.getLoginInfo(context);
 
     if(_login.user == null || !_login.user.autoLogin){
-      Navigator.of(context).push(
+      Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) {
             return LoginPage();
           })
       );
     }else{
-      Navigator.of(context).push(
+      Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) {
             return IndexPage();
           })
       );
+    }
+    }catch(err){
+      ToastWidget(context, err);
     }
   }
 

@@ -247,6 +247,26 @@ Future<Response> putAccountKTV(id, data, context){
   );
 }
 
+// 【ktv】线下充值
+Future<Response> chargeKtv(data, context){
+  return ajax.request(
+      context,
+      '/copyright/ktv/charge',
+      data: data,
+      options: Options(method: 'post')
+  );
+}
+
+// 【ktv】线下充值列表
+Future<Response> getRechargeRecord(params, context){
+  return ajax.request(
+      context,
+      '/copyright/settlement/order',
+      queryParameters: params,
+      options: Options(method: 'get')
+  );
+}
+
 
 
 
